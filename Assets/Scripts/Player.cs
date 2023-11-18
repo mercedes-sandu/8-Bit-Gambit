@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using InputState = LevelManager.InputState;
 
 public class Player : MonoBehaviour
 {
@@ -8,11 +9,20 @@ public class Player : MonoBehaviour
     
     [SerializeField] private float timeToHold = 3f;
 
+    private const int NumSteps = 5;
+
     private List<ChessPiece> _pieces = new();
-    private ChessPiece _selectedPiece;
-    private int _selectedPieceIndex = 0;
-    
-    private InputState _inputState = InputState.SelectPiece;
+    private ChessPiece _selectedPlayerPiece;
+    private int _selectedPlayerPieceIndex = 0;
+
+    private ChessPiece _selectedTargetPiece;
+    private int _selectedTargetPieceIndex = 0;
+
+    private float _pressStartTime;
+    private const float HoldTimeThreshold = 0.5f;
+
+    private Coroutine _currentCoroutine;
+    private bool _coroutineStarted = false;
 
     /// <summary>
     /// Get all the player's pieces and select the first one.
@@ -20,8 +30,8 @@ public class Player : MonoBehaviour
     private void Start()
     {
         _pieces = Board.Instance.GetPlayerPieces();
-        _selectedPiece = _pieces[_selectedPieceIndex];
-        _selectedPiece.SetHighlight(true);
+        _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
+        _selectedPlayerPiece.SetHighlight(true);
     }
 
     /// <summary>
@@ -31,32 +41,33 @@ public class Player : MonoBehaviour
     {
         if (Input.GetKeyDown(inputKey))
         {
-            TapInput();
+            TapInput(LevelManager.Instance.GetInputState());
+            _pressStartTime = Time.time;
         }
-        
-        if (Input.GetKey(inputKey))
+
+        if (!Input.GetKey(inputKey)) return;
+        if (Time.time - _pressStartTime > HoldTimeThreshold)
         {
-            HoldInput();
+            HoldInput(LevelManager.Instance.GetInputState());
         }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    private void TapInput()
+    /// <param name="inputState"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private void TapInput(InputState inputState)
     {
-        switch (_inputState)
+        switch (inputState)
         {
             case InputState.SelectPiece:
                 SelectPiece();
-                break;
-            case InputState.ConfirmPiece:
                 break;
             case InputState.SelectTarget:
                 SelectTarget();
                 break;
             case InputState.Attack:
-                Attack();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -66,9 +77,23 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
-    private void HoldInput()
+    /// <param name="inputState"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private void HoldInput(InputState inputState)
     {
-        
+        switch (LevelManager.Instance.GetInputState())
+        {
+            case InputState.SelectPiece:
+                ConfirmPiece();
+                break;
+            case InputState.SelectTarget:
+                ConfirmTarget();
+                break;
+            case InputState.Attack:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     /// <summary>
@@ -76,10 +101,10 @@ public class Player : MonoBehaviour
     /// </summary>
     private void SelectPiece()
     {
-        _selectedPiece.SetHighlight(false);
-        _selectedPieceIndex = (_selectedPieceIndex + 1) % _pieces.Count;
-        _selectedPiece = _pieces[_selectedPieceIndex];
-        _selectedPiece.SetHighlight(true);
+        _selectedPlayerPiece.SetHighlight(false);
+        _selectedPlayerPieceIndex = (_selectedPlayerPieceIndex + 1) % _pieces.Count;
+        _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
+        _selectedPlayerPiece.SetHighlight(true);
     }
 
     /// <summary>
@@ -87,7 +112,14 @@ public class Player : MonoBehaviour
     /// </summary>
     private void ConfirmPiece()
     {
-        
+        if (_coroutineStarted)
+        {
+            _selectedPlayerPiece.StopProgressBar(_currentCoroutine);
+            _coroutineStarted = false;
+        }
+                
+        _currentCoroutine = _selectedPlayerPiece.StartProgressBar(timeToHold, NumSteps);
+        _coroutineStarted = true;
     }
 
     /// <summary>
@@ -98,11 +130,7 @@ public class Player : MonoBehaviour
         
     }
 
-    /// <summary>
-    /// Note: This is the same as ConfirmTarget. The player will have to hold down the input key and the attack will
-    /// launch after a certain amount of time.
-    /// </summary>
-    private void Attack()
+    private void ConfirmTarget()
     {
         
     }
@@ -110,8 +138,8 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
-    private enum InputState
+    private void Attack()
     {
-        SelectPiece, ConfirmPiece, SelectTarget, Attack
+        
     }
 }

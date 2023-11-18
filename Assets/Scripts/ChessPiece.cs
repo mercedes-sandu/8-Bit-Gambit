@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class ChessPiece : MonoBehaviour
     [SerializeField] private Animator progressBarAnimator;
 
     private float _timeToHold;
-    private const int NumSteps = 5;
+    private int _numSteps;
     
     private static readonly int ProgressNumber = Animator.StringToHash("ProgressNumber");
     
@@ -34,10 +35,12 @@ public class ChessPiece : MonoBehaviour
     /// 
     /// </summary>
     /// <param name="timeToHold"></param>
+    /// <param name="numSteps"></param>
     /// <returns></returns>
-    public Coroutine StartProgressBar(float timeToHold)
+    public Coroutine StartProgressBar(float timeToHold, int numSteps)
     {
         _timeToHold = timeToHold;
+        _numSteps = numSteps;
         progressBar.enabled = true;
         return StartCoroutine(ProgressBar(0));
     }
@@ -51,10 +54,10 @@ public class ChessPiece : MonoBehaviour
     {
         progressBarAnimator.SetInteger(ProgressNumber, progressNumber);
         
-        yield return new WaitForSeconds(_timeToHold / NumSteps);
+        yield return new WaitForSeconds(_timeToHold / _numSteps);
         
         progressNumber++;
-        if (progressNumber < NumSteps)
+        if (progressNumber < _numSteps)
         {
             yield return ProgressBar(progressNumber);
         }
@@ -62,6 +65,21 @@ public class ChessPiece : MonoBehaviour
         {
             progressBarAnimator.SetInteger(ProgressNumber, 0);
             progressBar.enabled = false;
+            
+            var inputState = LevelManager.Instance.GetInputState();
+            switch (inputState)
+            {
+                case LevelManager.InputState.SelectPiece:
+                    GameEvent.SelectPiece(this);
+                    break;
+                case LevelManager.InputState.SelectTarget:
+                    GameEvent.AttackTarget(this);
+                    break;
+                case LevelManager.InputState.Attack:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
     
