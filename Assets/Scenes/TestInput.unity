@@ -196,7 +196,7 @@ SpriteRenderer:
   m_SortingLayerID: -66120421
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
+  m_Sprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -257,8 +257,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerPiece: 0
   tileHighlight: {fileID: 1814031267}
-  progressBar: {fileID: 0}
-  progressBarAnimator: {fileID: 0}
+  progressBar: {fileID: 2001287352}
+  progressBarAnimator: {fileID: 2001287353}
+  pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
+  pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   ExplosionPattern: []
 --- !u!212 &40255516
 SpriteRenderer:
@@ -378,7 +380,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 271994317}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -592,8 +594,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerPiece: 0
   tileHighlight: {fileID: 2763673}
-  progressBar: {fileID: 0}
-  progressBarAnimator: {fileID: 0}
+  progressBar: {fileID: 882169282}
+  progressBarAnimator: {fileID: 882169283}
+  pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
+  pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   ExplosionPattern: []
 --- !u!61 &394921445
 BoxCollider2D:
@@ -869,6 +873,50 @@ MonoBehaviour:
   m_CropFrameX: 0
   m_CropFrameY: 0
   m_StretchFill: 0
+--- !u!1 &619488284
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 619488286}
+  - component: {fileID: 619488285}
+  m_Layer: 0
+  m_Name: Level Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &619488285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619488284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1397b427dfd56343820a068b5f21e47, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &619488286
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619488284}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &882169280
 GameObject:
   m_ObjectHideFlags: 0
@@ -909,7 +957,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 882169280}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1144,8 +1192,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerPiece: 1
   tileHighlight: {fileID: 1188801557}
-  progressBar: {fileID: 0}
-  progressBarAnimator: {fileID: 0}
+  progressBar: {fileID: 271994319}
+  progressBarAnimator: {fileID: 271994320}
+  pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
+  pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   ExplosionPattern: []
 --- !u!212 &1777361287
 SpriteRenderer:
@@ -1806,7 +1856,7 @@ SpriteRenderer:
   m_SortingLayerID: -66120421
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
+  m_Sprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1857,7 +1907,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2001287350}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1963,7 +2013,7 @@ SpriteRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2048107786}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -2079,8 +2129,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerPiece: 1
   tileHighlight: {fileID: 405541903}
-  progressBar: {fileID: 0}
-  progressBarAnimator: {fileID: 0}
+  progressBar: {fileID: 2048107788}
+  progressBarAnimator: {fileID: 2048107789}
+  pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
+  pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   ExplosionPattern: []
 --- !u!212 &2061865060
 SpriteRenderer:

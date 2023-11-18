@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using InputState = LevelManager.InputState;
 
@@ -15,15 +16,26 @@ public class Player : MonoBehaviour
     private ChessPiece _selectedPlayerPiece;
     private int _selectedPlayerPieceIndex = 0;
 
+    private List<ChessPiece> _targetPieces = new();
     private ChessPiece _selectedTargetPiece;
     private int _selectedTargetPieceIndex = 0;
 
+    private bool _firstKeyPress = false;
+    
     private float _pressStartTime;
+    private bool _wasKeyPressed = false;
     private const float HoldTimeThreshold = 0.5f;
+    private bool _holdingInputKey = false;
 
     private Coroutine _currentCoroutine;
     private bool _coroutineStarted = false;
 
+    private void Awake()
+    {
+        GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
+        GameEvent.OnAttackTarget += Attack;
+    }
+    
     /// <summary>
     /// Get all the player's pieces and select the first one.
     /// </summary>
@@ -31,7 +43,7 @@ public class Player : MonoBehaviour
     {
         _pieces = Board.Instance.GetPlayerPieces();
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
-        _selectedPlayerPiece.SetHighlight(true);
+        _selectedPlayerPiece.SetHighlight(true, true);
     }
 
     /// <summary>
@@ -39,17 +51,24 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (Input.GetKeyDown(inputKey))
+        if (!_wasKeyPressed && !_holdingInputKey && Input.GetKeyDown(inputKey))
         {
             TapInput(LevelManager.Instance.GetInputState());
             _pressStartTime = Time.time;
+            _wasKeyPressed = true;
         }
-
-        if (!Input.GetKey(inputKey)) return;
-        if (Time.time - _pressStartTime > HoldTimeThreshold)
+        
+        if (Input.GetKey(inputKey) && Time.time - _pressStartTime > HoldTimeThreshold)
         {
+            _holdingInputKey = true;
             HoldInput(LevelManager.Instance.GetInputState());
         }
+
+        if (!Input.GetKeyUp(inputKey)) return;
+        if (!_holdingInputKey) return;
+        _wasKeyPressed = false;
+        _holdingInputKey = false;
+        ReleaseInput(LevelManager.Instance.GetInputState());
     }
 
     /// <summary>
@@ -81,7 +100,7 @@ public class Player : MonoBehaviour
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     private void HoldInput(InputState inputState)
     {
-        switch (LevelManager.Instance.GetInputState())
+        switch (inputState)
         {
             case InputState.SelectPiece:
                 ConfirmPiece();
@@ -96,15 +115,32 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void ReleaseInput(InputState inputState)
+    {
+        switch (inputState)
+        {
+            case InputState.SelectPiece:
+                PerformReleaseInput();
+                break;
+            case InputState.SelectTarget:
+                PerformReleaseInput();
+                break;
+            case InputState.Attack:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
     /// <summary>
     /// 
     /// </summary>
     private void SelectPiece()
     {
-        _selectedPlayerPiece.SetHighlight(false);
+        _selectedPlayerPiece.SetHighlight(false, true);
         _selectedPlayerPieceIndex = (_selectedPlayerPieceIndex + 1) % _pieces.Count;
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
-        _selectedPlayerPiece.SetHighlight(true);
+        _selectedPlayerPiece.SetHighlight(true, true);
     }
 
     /// <summary>
@@ -112,14 +148,10 @@ public class Player : MonoBehaviour
     /// </summary>
     private void ConfirmPiece()
     {
-        if (_coroutineStarted)
-        {
-            _selectedPlayerPiece.StopProgressBar(_currentCoroutine);
-            _coroutineStarted = false;
-        }
-                
-        _currentCoroutine = _selectedPlayerPiece.StartProgressBar(timeToHold, NumSteps);
+        if (_coroutineStarted) return;
+           
         _coroutineStarted = true;
+        _currentCoroutine = _selectedPlayerPiece.StartProgressBar(timeToHold, NumSteps);
     }
 
     /// <summary>
@@ -127,9 +159,23 @@ public class Player : MonoBehaviour
     /// </summary>
     private void SelectTarget()
     {
+        if (_selectedTargetPiece == _selectedPlayerPiece)
+        {
+            _selectedTargetPiece.SetHighlight(true, true);
+        }
+        else
+        {
+            _selectedTargetPiece.SetHighlight(false, false);
+        }
         
+        _selectedTargetPieceIndex = (_selectedTargetPieceIndex + 1) % _targetPieces.Count;
+        _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
+        _selectedTargetPiece.SetHighlight(true, false);
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private void ConfirmTarget()
     {
         
@@ -138,8 +184,46 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
-    private void Attack()
+    /// <param name="selectedPiece"></param>
+    private void ConfirmSelectedPiece(ChessPiece selectedPiece)
     {
-        
+        _holdingInputKey = false;
+        _coroutineStarted = false;
+        _selectedPlayerPiece.SetHighlight(false, true);
+        _selectedPlayerPiece = selectedPiece;
+        _selectedPlayerPieceIndex = _pieces.IndexOf(selectedPiece);
+        _selectedPlayerPiece.SetHighlight(true, true);
+        _targetPieces = Board.Instance.GetOpponentPieces().Append(_selectedPlayerPiece).ToList();
+        _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
+        _selectedTargetPiece.SetHighlight(true, false);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="pieceToAttack"></param>
+    private void Attack(ChessPiece pieceToAttack)
+    {
+        _coroutineStarted = false;
+        // todo: spawn attack at pieceToAttack's position
+        Debug.Log($"Attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");
+        GameEvent.CompleteTurn();
+    }
+
+    private void PerformReleaseInput()
+    {
+        if (!_coroutineStarted) return;
+        _selectedPlayerPiece.StopProgressBar(_currentCoroutine);
+        _coroutineStarted = false;
+        _holdingInputKey = false;
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnDestroy()
+    {
+        GameEvent.OnConfirmSelectedPiece -= ConfirmSelectedPiece;
+        GameEvent.OnAttackTarget -= Attack;
     }
 }

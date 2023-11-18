@@ -8,6 +8,8 @@ public class LevelManager : MonoBehaviour
     
     private InputState _inputState = InputState.SelectPiece;
     
+    private bool _isPlayerTurn = true;
+    
     /// <summary>
     /// 
     /// </summary>
@@ -16,6 +18,9 @@ public class LevelManager : MonoBehaviour
         SelectPiece, SelectTarget, Attack
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
     private void Awake()
     {
         if (!Instance)
@@ -26,7 +31,42 @@ public class LevelManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
+        GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
+        GameEvent.OnAttackTarget += Attack;
+        GameEvent.OnTurnComplete += CompleteTurn;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="selectedPiece"></param>
+    private void ConfirmSelectedPiece(ChessPiece selectedPiece)
+    {
+        _inputState = InputState.SelectTarget;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="targetPiece"></param>
+    private void Attack(ChessPiece targetPiece)
+    {
+        _inputState = InputState.Attack;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void CompleteTurn()
+    {
+        _isPlayerTurn = !_isPlayerTurn;
+        _inputState = InputState.SelectPiece;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public InputState GetInputState() => _inputState;
 }

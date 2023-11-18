@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ChessPiece : MonoBehaviour
@@ -11,6 +10,9 @@ public class ChessPiece : MonoBehaviour
     [SerializeField] private SpriteRenderer progressBar;
 
     [SerializeField] private Animator progressBarAnimator;
+
+    [SerializeField] private Sprite pieceSelectHighlightSprite;
+    [SerializeField] private Sprite pieceAttackHighlightSprite;
 
     private float _timeToHold;
     private int _numSteps;
@@ -23,8 +25,10 @@ public class ChessPiece : MonoBehaviour
     /// 
     /// </summary>
     /// <param name="highlight"></param>
-    public void SetHighlight(bool highlight)
+    /// <param name="green"></param>
+    public void SetHighlight(bool highlight, bool green)
     {
+        tileHighlight.sprite = green ? pieceSelectHighlightSprite : pieceAttackHighlightSprite;
         tileHighlight.enabled = highlight;
     }
 
@@ -73,7 +77,7 @@ public class ChessPiece : MonoBehaviour
             switch (inputState)
             {
                 case LevelManager.InputState.SelectPiece:
-                    GameEvent.SelectPiece(this);
+                    GameEvent.ConfirmSelectedPiece(this);
                     break;
                 case LevelManager.InputState.SelectTarget:
                     GameEvent.AttackTarget(this);
