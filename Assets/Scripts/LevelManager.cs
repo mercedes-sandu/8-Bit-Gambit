@@ -11,7 +11,7 @@ public class LevelManager : MonoBehaviour
     private bool _isPlayerTurn = true;
     
     /// <summary>
-    /// 
+    /// The different input states the player and opponent can be in.
     /// </summary>
     public enum InputState
     {
@@ -19,7 +19,7 @@ public class LevelManager : MonoBehaviour
     }
     
     /// <summary>
-    /// 
+    /// Establishes the singleton and subscribes to game events.
     /// </summary>
     private void Awake()
     {
@@ -38,25 +38,25 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// When an attacking piece has been selected, change the input state to selecting a target piece.
     /// </summary>
-    /// <param name="selectedPiece"></param>
+    /// <param name="selectedPiece">The piece selected.</param>
     private void ConfirmSelectedPiece(ChessPiece selectedPiece)
     {
         _inputState = InputState.SelectTarget;
     }
 
     /// <summary>
-    /// 
+    /// When a target piece has been selected, change the input state to attacking.
     /// </summary>
-    /// <param name="targetPiece"></param>
+    /// <param name="targetPiece">The target piece selected.</param>
     private void Attack(ChessPiece targetPiece)
     {
         _inputState = InputState.Attack;
     }
 
     /// <summary>
-    /// 
+    /// When a turn has been completed, change the input state to selecting a piece and change the turn.
     /// </summary>
     private void CompleteTurn()
     {
@@ -65,8 +65,18 @@ public class LevelManager : MonoBehaviour
     }
     
     /// <summary>
-    /// 
+    /// Returns the current input state.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>The current input state.</returns>
     public InputState GetInputState() => _inputState;
+    
+    /// <summary>
+    /// Unsubscribes from game events.
+    /// </summary>
+    private void OnDestroy()
+    {
+        GameEvent.OnConfirmSelectedPiece -= ConfirmSelectedPiece;
+        GameEvent.OnAttackTarget -= Attack;
+        GameEvent.OnTurnComplete -= CompleteTurn;
+    }
 }

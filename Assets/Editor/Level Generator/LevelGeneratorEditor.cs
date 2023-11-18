@@ -6,9 +6,6 @@ using UnityEngine.Tilemaps;
 
 namespace Editor.Level_Generator
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class LevelGeneratorEditor : EditorWindow
     {
         // user-inputted level texture
@@ -55,7 +52,7 @@ namespace Editor.Level_Generator
         private Color32[,] _tilemapColors;
 
         /// <summary>
-        /// 
+        /// Creates a window for the level generator.
         /// </summary>
         [MenuItem("Level Generator/Generate Level")]
         private static void CreateLevelGenerator()
@@ -64,7 +61,7 @@ namespace Editor.Level_Generator
         }
 
         /// <summary>
-        /// 
+        /// Loads all the assets needed for the level generator from the Resources folder.
         /// </summary>
         private void OnEnable()
         {
@@ -86,10 +83,10 @@ namespace Editor.Level_Generator
         }
         
         /// <summary>
-        /// 
+        /// Throws an exception if the specified object is null and was not found/loaded.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="objectName"></param>
+        /// <param name="obj">The object to perform the null check on.</param>
+        /// <param name="objectName">The object's name (used for the exception).</param>
         /// <exception cref="Exception"></exception>
         private void ThrowExceptionIfNull(object obj, string objectName)
         {
@@ -97,7 +94,7 @@ namespace Editor.Level_Generator
         }
 
         /// <summary>
-        /// 
+        /// Checks to make sure all the assets needed for the level generator were loaded.
         /// </summary>
         private void ValidateLoadedAssets()
         {
@@ -118,7 +115,8 @@ namespace Editor.Level_Generator
         }
 
         /// <summary>
-        /// 
+        /// Places tiles corresponding to the level texture on the board tilemap.
+        /// TODO: implement
         /// </summary>
         private void BoardPass()
         {
@@ -126,7 +124,8 @@ namespace Editor.Level_Generator
         }
 
         /// <summary>
-        /// 
+        /// Places pieces corresponding to the level texture on the board tilemap.
+        /// TODO: implement
         /// </summary>
         private void PiecesPass()
         {
@@ -134,12 +133,12 @@ namespace Editor.Level_Generator
         }
 
         /// <summary>
-        /// 
+        /// Converts the 1D array of colors in the texture to a 2D array of colors.
         /// </summary>
-        /// <param name="colors"></param>
-        /// <param name="width"></param>
-        /// <param name="height"></param>
-        /// <returns></returns>
+        /// <param name="colors">The 1D array of colors in the texture.</param>
+        /// <param name="width">The texture's width.</param>
+        /// <param name="height">The texture's height.</param>
+        /// <returns>The 2D array of colors in the texture.</returns>
         private Color32[,] ConvertTo2DArray(IReadOnlyList<Color32> colors, int width, int height)
         {
             var colors2D = new Color32[width, height];
@@ -157,7 +156,8 @@ namespace Editor.Level_Generator
         }
         
         /// <summary>
-        /// 
+        /// Generates a level with the specified level texture.
+        /// TODO: finish implementing
         /// </summary>
         private void GenerateLevel()
         {
@@ -169,7 +169,7 @@ namespace Editor.Level_Generator
         }
 
         /// <summary>
-        /// 
+        /// Draws the menu UI for the level generator.
         /// </summary>
         private void OnGUI()
         {

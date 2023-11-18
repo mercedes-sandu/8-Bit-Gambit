@@ -22,10 +22,10 @@ public class ChessPiece : MonoBehaviour
     public ExplosionSequence[] ExplosionPattern;
 
     /// <summary>
-    /// 
+    /// Enables/disables the tile highlight sprite and sets it to the specified color (either green or red).
     /// </summary>
-    /// <param name="highlight"></param>
-    /// <param name="green"></param>
+    /// <param name="highlight">True if the highlight is to be enabled, false otherwise.</param>
+    /// <param name="green">True if the highlight is to be set to green, false if red.</param>
     public void SetHighlight(bool highlight, bool green)
     {
         tileHighlight.sprite = green ? pieceSelectHighlightSprite : pieceAttackHighlightSprite;
@@ -33,17 +33,18 @@ public class ChessPiece : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Returns whether or not this piece is a player piece.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>True if this piece is a player piece, false if it is an opponent piece.</returns>
     public bool IsPlayerPiece() => isPlayerPiece;
     
     /// <summary>
-    /// 
+    /// Starts the coroutine to animate the progress bar.
     /// </summary>
-    /// <param name="timeToHold"></param>
-    /// <param name="numSteps"></param>
-    /// <returns></returns>
+    /// <param name="timeToHold">The amount of time the player must hold the input key to complete the progress bar.
+    /// </param>
+    /// <param name="numSteps">The number of steps in the progress bar.</param>
+    /// <returns>The progress bar animation coroutine which was started.</returns>
     public Coroutine StartProgressBar(float timeToHold, int numSteps)
     {
         _timeToHold = timeToHold;
@@ -53,9 +54,9 @@ public class ChessPiece : MonoBehaviour
     }
     
     /// <summary>
-    /// 
+    /// Advances the progress bar animation step by step.
     /// </summary>
-    /// <param name="progressNumber"></param>
+    /// <param name="progressNumber">The number corresponding to the current progress state.</param>
     /// <returns></returns>
     private IEnumerator ProgressBar(int progressNumber)
     {
@@ -91,9 +92,9 @@ public class ChessPiece : MonoBehaviour
     }
     
     /// <summary>
-    /// 
+    /// Stops the progress bar animation coroutine.
     /// </summary>
-    /// <param name="coroutine"></param>
+    /// <param name="coroutine">The coroutine to stop.</param>
     public void StopProgressBar(Coroutine coroutine)
     {
         StopCoroutine(coroutine);

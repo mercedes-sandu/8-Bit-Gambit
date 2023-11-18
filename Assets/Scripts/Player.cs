@@ -30,6 +30,9 @@ public class Player : MonoBehaviour
     private Coroutine _currentCoroutine;
     private bool _coroutineStarted = false;
 
+    /// <summary>
+    /// Subscribes to game events.
+    /// </summary>
     private void Awake()
     {
         GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
@@ -72,9 +75,9 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Handles input for when the input key is tapped and not held.
     /// </summary>
-    /// <param name="inputState"></param>
+    /// <param name="inputState">The current input state.</param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     private void TapInput(InputState inputState)
     {
@@ -94,9 +97,9 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Handles input for when the input key is held.
     /// </summary>
-    /// <param name="inputState"></param>
+    /// <param name="inputState">The current input state.</param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     private void HoldInput(InputState inputState)
     {
@@ -115,6 +118,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles input for when the input key is released.
+    /// </summary>
+    /// <param name="inputState">The current input state.</param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     private void ReleaseInput(InputState inputState)
     {
         switch (inputState)
@@ -133,7 +141,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Deactivates the current selected piece and selects the next piece in the list.
     /// </summary>
     private void SelectPiece()
     {
@@ -144,7 +152,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Starts the progress bar animation for the selected piece, only if the coroutine has not already begun.
     /// </summary>
     private void ConfirmPiece()
     {
@@ -155,7 +163,7 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Deactivates the current selected target piece and selects the next target piece in the list.
     /// </summary>
     private void SelectTarget()
     {
@@ -174,7 +182,8 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Starts the progress bar animation for the selected target piece, only if the coroutine has not already begun.
+    /// TODO: Implement
     /// </summary>
     private void ConfirmTarget()
     {
@@ -182,9 +191,10 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// When the progress bar animation has been completed, confirm the selected piece and get the list of possible
+    /// target pieces for the player to choose from.
     /// </summary>
-    /// <param name="selectedPiece"></param>
+    /// <param name="selectedPiece">The player's selected piece to attack with.</param>
     private void ConfirmSelectedPiece(ChessPiece selectedPiece)
     {
         _holdingInputKey = false;
@@ -199,9 +209,10 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Launches the player's selected piece's attack at the specified target piece to attack.
+    /// TODO: finish implementing.
     /// </summary>
-    /// <param name="pieceToAttack"></param>
+    /// <param name="pieceToAttack">The piece to attack.</param>
     private void Attack(ChessPiece pieceToAttack)
     {
         _coroutineStarted = false;
@@ -210,6 +221,9 @@ public class Player : MonoBehaviour
         GameEvent.CompleteTurn();
     }
 
+    /// <summary>
+    /// Interrupts and stops the progress bar animation coroutine if it is running.
+    /// </summary>
     private void PerformReleaseInput()
     {
         if (!_coroutineStarted) return;
@@ -219,7 +233,7 @@ public class Player : MonoBehaviour
     }
     
     /// <summary>
-    /// 
+    /// Unsubscribes from game events.
     /// </summary>
     private void OnDestroy()
     {
