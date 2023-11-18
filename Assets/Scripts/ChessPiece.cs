@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ChessPiece : MonoBehaviour
@@ -14,7 +15,9 @@ public class ChessPiece : MonoBehaviour
     private const int NumSteps = 5;
     
     private static readonly int ProgressNumber = Animator.StringToHash("ProgressNumber");
-    
+
+    public ExplosionSequence[] ExplosionPattern;
+
     /// <summary>
     /// 
     /// </summary>

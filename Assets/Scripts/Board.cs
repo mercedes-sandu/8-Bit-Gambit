@@ -8,6 +8,7 @@ public class Board : MonoBehaviour
     
     private List<ChessPiece> _playerPieces = new ();
     private List<ChessPiece> _opponentPieces = new ();
+    public int _numEdges = 4;
 
     private void Awake()
     {
