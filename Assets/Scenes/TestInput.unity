@@ -257,7 +257,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerPiece: 0
   tileHighlight: {fileID: 1814031267}
+  progressBar: {fileID: 0}
   progressBarAnimator: {fileID: 0}
+  ExplosionPattern: []
 --- !u!212 &40255516
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -487,6 +489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputKey: 32
+  timeToHold: 3
 --- !u!1 &394921441
 GameObject:
   m_ObjectHideFlags: 0
@@ -589,7 +592,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerPiece: 0
   tileHighlight: {fileID: 2763673}
+  progressBar: {fileID: 0}
   progressBarAnimator: {fileID: 0}
+  ExplosionPattern: []
 --- !u!61 &394921445
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -758,6 +763,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3706ddbf768819146a27d5cbe32be456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _numEdges: 4
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1138,7 +1144,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerPiece: 1
   tileHighlight: {fileID: 1188801557}
+  progressBar: {fileID: 0}
   progressBarAnimator: {fileID: 0}
+  ExplosionPattern: []
 --- !u!212 &1777361287
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2071,7 +2079,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPlayerPiece: 1
   tileHighlight: {fileID: 405541903}
+  progressBar: {fileID: 0}
   progressBarAnimator: {fileID: 0}
+  ExplosionPattern: []
 --- !u!212 &2061865060
 SpriteRenderer:
   m_ObjectHideFlags: 0
