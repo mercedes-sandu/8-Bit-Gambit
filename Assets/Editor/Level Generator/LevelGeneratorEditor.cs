@@ -1,18 +1,38 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
 
 namespace Editor.Level_Generator
 {
     public class LevelGeneratorEditor : EditorWindow
     {
+        #region SerializeFields
         // user-inputted level texture
         [SerializeField] private Texture2D levelTexture;
         
         // user-inputted tilemap
         [SerializeField] private Tilemap boardTilemap;
+        
+        // colors
+        [SerializeField] private Color32 ignoreColor = new (255, 255, 255, 255);
+        [SerializeField] private Color32 boardTileColor = new (0, 0, 0, 255);
+        [SerializeField] private Color32 playerPawnColor = new (255, 0, 0, 255);
+        [SerializeField] private Color32 playerRookColor = new (255, 255, 0, 255);
+        [SerializeField] private Color32 playerKnightColor = new (0, 255, 0, 255);
+        [SerializeField] private Color32 playerBishopColor = new (0, 255, 255, 255);
+        [SerializeField] private Color32 playerQueenColor = new (0, 0, 255, 255);
+        [SerializeField] private Color32 playerKingColor = new (255, 0, 255, 255);
+        [SerializeField] private Color32 opponentPawnColor = new (255, 128, 0, 255);
+        [SerializeField] private Color32 opponentRookColor = new (255, 255, 128, 255);
+        [SerializeField] private Color32 opponentKnightColor = new (128, 255, 128, 255);
+        [SerializeField] private Color32 opponentBishopColor = new (128, 255, 255, 255);
+        [SerializeField] private Color32 opponentQueenColor = new (128, 128, 255, 255);
+        [SerializeField] private Color32 opponentKingColor = new (255, 128, 255, 255);
+        #endregion
 
         // sprites to load
         private Sprite _lightBoardTile;
@@ -32,24 +52,14 @@ namespace Editor.Level_Generator
         private GameObject _opponentQueenPrefab;
         private GameObject _opponentKingPrefab;
         
-        // colors
-        private static readonly Color32 IgnoreColor = new (255, 255, 255, 255);
-        private static readonly Color32 BoardTileColor = new (0, 0, 0, 255);
-        private static readonly Color32 PlayerPawnColor = new (255, 0, 0, 255);
-        private static readonly Color32 PlayerRookColor = new (255, 255, 0, 255);
-        private static readonly Color32 PlayerKnightColor = new (0, 255, 0, 255);
-        private static readonly Color32 PlayerBishopColor = new (0, 255, 255, 255);
-        private static readonly Color32 PlayerQueenColor = new (0, 0, 255, 255);
-        private static readonly Color32 PlayerKingColor = new (255, 0, 255, 255);
-        private static readonly Color32 OpponentPawnColor = new (255, 128, 0, 255);
-        private static readonly Color32 OpponentRookColor = new (255, 255, 128, 255);
-        private static readonly Color32 OpponentKnightColor = new (128, 255, 128, 255);
-        private static readonly Color32 OpponentBishopColor = new (128, 255, 255, 255);
-        private static readonly Color32 OpponentQueenColor = new (128, 128, 255, 255);
-        private static readonly Color32 OpponentKingColor = new (255, 128, 255, 255);
+        // color to prefab dictionary
+        private Dictionary<Color32, GameObject> _colorToPrefab = new ();
 
         // color 2d array
         private Color32[,] _tilemapColors;
+        
+        // instantiated piece offset
+        private static readonly Vector3 PieceOffset = new (0.5f, 0.5f, 0f);
 
         /// <summary>
         /// Creates a window for the level generator.
@@ -63,23 +73,31 @@ namespace Editor.Level_Generator
         /// <summary>
         /// Loads all the assets needed for the level generator from the Resources folder.
         /// </summary>
+        private void LoadAssets()
+        {
+            _lightBoardTile = Resources.Load<Sprite>("Sprites/Board/LightBoardTile");
+            _darkBoardTile = Resources.Load<Sprite>("Sprites/Board/DarkBoardTile");
+            _playerPawnPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/PlayerPawn");
+            _playerRookPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/PlayerRook");
+            _playerKnightPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/PlayerKnight");
+            _playerBishopPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/PlayerBishop");
+            _playerQueenPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/PlayerQueen");
+            _playerKingPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/PlayerKing");
+            _opponentPawnPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/OpponentPawn");
+            _opponentRookPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/OpponentRook");
+            _opponentKnightPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/OpponentKnight");
+            _opponentBishopPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/OpponentBishop");
+            _opponentQueenPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/OpponentQueen");
+            _opponentKingPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/OpponentKing");
+        }
+
+        /// <summary>
+        /// Opens the level generator and begins loading assets.
+        /// </summary>
         private void OnEnable()
         {
             Debug.Log("Opening Level Generator");
-            _lightBoardTile = Resources.Load<Sprite>("Sprites/Board/LightBoardTile");
-            _darkBoardTile = Resources.Load<Sprite>("Sprites/Board/DarkBoardTile");
-            _playerPawnPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/Pawn");
-            _playerRookPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/Rook");
-            _playerKnightPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/Knight");
-            _playerBishopPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/Bishop");
-            _playerQueenPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/Queen");
-            _playerKingPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Player/King");
-            _opponentPawnPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/Pawn");
-            _opponentRookPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/Rook");
-            _opponentKnightPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/Knight");
-            _opponentBishopPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/Bishop");
-            _opponentQueenPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/Queen");
-            _opponentKingPrefab = Resources.Load<GameObject>("Prefabs/Pieces/Opponent/King");
+            LoadAssets();
         }
         
         /// <summary>
@@ -115,21 +133,91 @@ namespace Editor.Level_Generator
         }
 
         /// <summary>
-        /// Places tiles corresponding to the level texture on the board tilemap.
-        /// TODO: implement
+        /// Maps each color to its corresponding prefab.
         /// </summary>
-        private void BoardPass()
+        private void BuildColorToPrefabDictionary()
         {
-            
+            var colors = new[]
+            {
+                playerPawnColor, playerRookColor, playerKnightColor, playerBishopColor,
+                playerQueenColor, playerKingColor, opponentPawnColor, opponentRookColor,
+                opponentKnightColor, opponentBishopColor, opponentQueenColor, opponentKingColor
+            };
+
+            var prefabs = new[]
+            {
+                _playerPawnPrefab, _playerRookPrefab, _playerKnightPrefab, _playerBishopPrefab,
+                _playerQueenPrefab, _playerKingPrefab, _opponentPawnPrefab, _opponentRookPrefab,
+                _opponentKnightPrefab, _opponentBishopPrefab, _opponentQueenPrefab, _opponentKingPrefab
+            };
+
+            for (var i = 0; i < colors.Length; i++)
+            {
+                _colorToPrefab.TryAdd(colors[i], prefabs[i]);
+            }
         }
 
         /// <summary>
-        /// Places pieces corresponding to the level texture on the board tilemap.
-        /// TODO: implement
+        /// Returns whether two Color32's are equal.
         /// </summary>
-        private void PiecesPass()
+        /// <param name="color1">The first color.</param>
+        /// <param name="color2">The second color.</param>
+        /// <returns>True if the two colors are equal, false otherwise.</returns>
+        private bool ColorsEqual(Color32 color1, Color32 color2) => color1.r == color2.r && color1.g == color2.g &&
+                                                                    color1.b == color2.b && color1.a == color2.a;
+
+        /// <summary>
+        /// Places tiles corresponding to the level texture on the board tilemap. A board tile is placed at any pixel
+        /// that is not IgnoreColor.
+        /// TODO: figure out why tiles get instantiated off to the upper right of center
+        /// </summary>
+        private void BoardPass()
         {
-            
+            for (var x = 0; x < levelTexture.width; x++)
+            {
+                for (var y = 0; y < levelTexture.height; y++)
+                {
+                    var color = _tilemapColors[x, y];
+                    if (ColorsEqual(color, ignoreColor)) continue;
+
+                    var tile = CreateInstance<Tile>();
+                    tile.sprite = (x + y) % 2 == 0 ? _lightBoardTile : _darkBoardTile;
+                    boardTilemap.SetTile(new Vector3Int(x, y, 0), tile);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Creates a pair of the piece prefab and whether it is a player piece or not.
+        /// </summary>
+        /// <param name="color">The color corresponding to the prefab.</param>
+        /// <returns>The pair (prefab, isPlayerPiece).</returns>
+        private (GameObject, bool) GetPiecePrefab(Color32 color) =>
+            (_colorToPrefab[color], _colorToPrefab[color].name.Contains("Player"));
+
+        /// <summary>
+        /// Places pieces corresponding to the level texture on the board tilemap.
+        /// </summary>
+        /// <param name="playerPiecesContainer">The container game object which will hold the player's pieces.</param>
+        /// <param name="opponentPiecesContainer">The container game object which will hold the opponent's pieces.
+        /// </param>
+        private void PiecesPass(Transform playerPiecesContainer, Transform opponentPiecesContainer)
+        {
+            for (var x = 0; x < levelTexture.width; x++)
+            {
+                for (var y = 0; y < levelTexture.height; y++)
+                {
+                    var color = _tilemapColors[x, y];
+                    if (ColorsEqual(color, ignoreColor) || ColorsEqual(color, boardTileColor)) continue;
+
+                    var tilePosition = new Vector3Int(x, y, 0);
+                    var (piece, isPlayerPiece) = GetPiecePrefab(color);
+                    var instantiatedPiece = PrefabUtility.InstantiatePrefab(piece,
+                        isPlayerPiece ? playerPiecesContainer : opponentPiecesContainer) as GameObject;
+
+                    if (instantiatedPiece) instantiatedPiece.transform.position = tilePosition + PieceOffset;
+                }
+            }
         }
 
         /// <summary>
@@ -157,15 +245,33 @@ namespace Editor.Level_Generator
         
         /// <summary>
         /// Generates a level with the specified level texture.
-        /// TODO: finish implementing
         /// </summary>
         private void GenerateLevel()
         {
             // make sure all loaded assets are not null
-            // ValidateLoadedAssets();
+            ValidateLoadedAssets();
+            
+            // build the color to prefab dictionary
+            BuildColorToPrefabDictionary();
             
             // get all the colors from the texture
             _tilemapColors = ConvertTo2DArray(levelTexture.GetPixels32(), levelTexture.width, levelTexture.height);
+            
+            // run the board pass
+            BoardPass();
+            
+            // create containers for the pieces
+            var piecesContainer = new GameObject("Pieces");
+            var playerPiecesContainer = new GameObject("Player Pieces");
+            var opponentPiecesContainer = new GameObject("Opponent Pieces");
+            playerPiecesContainer.transform.parent = piecesContainer.transform;
+            opponentPiecesContainer.transform.parent = piecesContainer.transform;
+            
+            // run the pieces pass
+            PiecesPass(playerPiecesContainer.transform, opponentPiecesContainer.transform);
+            
+            // make the scene dirty
+            EditorSceneManager.MarkSceneDirty(SceneManager.GetActiveScene());
         }
 
         /// <summary>
@@ -174,11 +280,29 @@ namespace Editor.Level_Generator
         private void OnGUI()
         {
             GUILayout.Label("Level Generator", EditorStyles.boldLabel);
-            GUILayout.Label("Make sure that Texture.isReadable is set to true.");
+            GUILayout.Label("Make sure that Read/Write access is set to true for the Texture2D.");
+            
             levelTexture =
-                (Texture2D)EditorGUILayout.ObjectField("Level Texture", levelTexture, typeof(Texture2D), false);
+                (Texture2D)EditorGUILayout.ObjectField("Level Texture", levelTexture, typeof(Texture2D), 
+                    false);
             boardTilemap =
-                (Tilemap)EditorGUILayout.ObjectField("Board Tilemap", boardTilemap, typeof(Tilemap), true);
+                (Tilemap)EditorGUILayout.ObjectField("Board Tilemap", boardTilemap, typeof(Tilemap), 
+                    true);
+            ignoreColor = EditorGUILayout.ColorField("Ignore Color", ignoreColor);
+            boardTileColor = EditorGUILayout.ColorField("Board Tile Color", boardTileColor);
+            playerPawnColor = EditorGUILayout.ColorField("Player Pawn Color", playerPawnColor);
+            playerRookColor = EditorGUILayout.ColorField("Player Rook Color", playerRookColor);
+            playerKnightColor = EditorGUILayout.ColorField("Player Knight Color", playerKnightColor);
+            playerBishopColor = EditorGUILayout.ColorField("Player Bishop Color", playerBishopColor);
+            playerQueenColor = EditorGUILayout.ColorField("Player Queen Color", playerQueenColor);
+            playerKingColor = EditorGUILayout.ColorField("Player King Color", playerKingColor);
+            opponentPawnColor = EditorGUILayout.ColorField("Opponent Pawn Color", opponentPawnColor);
+            opponentRookColor = EditorGUILayout.ColorField("Opponent Rook Color", opponentRookColor);
+            opponentKnightColor = EditorGUILayout.ColorField("Opponent Knight Color", opponentKnightColor);
+            opponentBishopColor = EditorGUILayout.ColorField("Opponent Bishop Color", opponentBishopColor);
+            opponentQueenColor = EditorGUILayout.ColorField("Opponent Queen Color", opponentQueenColor);
+            opponentKingColor = EditorGUILayout.ColorField("Opponent King Color", opponentKingColor);
+            
             if (GUILayout.Button("Generate Level")) GenerateLevel();
         }
     }
