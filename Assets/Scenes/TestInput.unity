@@ -259,6 +259,8 @@ MonoBehaviour:
   tileHighlight: {fileID: 1814031267}
   progressBar: {fileID: 2001287352}
   progressBarAnimator: {fileID: 2001287353}
+  pieceSelectProgressBarAnimator: {fileID: 9100000, guid: 3dd7d82a37de5f84299c095836d04326, type: 2}
+  pieceAttackProgressBarAnimator: {fileID: 9100000, guid: 74d7b053ee7c3d0468564fef3abfff74, type: 2}
   pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   ExplosionPattern: []
@@ -491,7 +493,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputKey: 32
-  timeToHold: 3
+  keyTapThreshold: 0.5
+  keyHoldThreshold: 2
 --- !u!1 &394921441
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,6 +599,8 @@ MonoBehaviour:
   tileHighlight: {fileID: 2763673}
   progressBar: {fileID: 882169282}
   progressBarAnimator: {fileID: 882169283}
+  pieceSelectProgressBarAnimator: {fileID: 9100000, guid: 3dd7d82a37de5f84299c095836d04326, type: 2}
+  pieceAttackProgressBarAnimator: {fileID: 9100000, guid: 74d7b053ee7c3d0468564fef3abfff74, type: 2}
   pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   ExplosionPattern: []
@@ -767,7 +772,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3706ddbf768819146a27d5cbe32be456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _numEdges: 4
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -822,7 +826,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 4
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1194,6 +1198,8 @@ MonoBehaviour:
   tileHighlight: {fileID: 1188801557}
   progressBar: {fileID: 271994319}
   progressBarAnimator: {fileID: 271994320}
+  pieceSelectProgressBarAnimator: {fileID: 9100000, guid: 3dd7d82a37de5f84299c095836d04326, type: 2}
+  pieceAttackProgressBarAnimator: {fileID: 9100000, guid: 74d7b053ee7c3d0468564fef3abfff74, type: 2}
   pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   ExplosionPattern: []
@@ -2131,6 +2137,8 @@ MonoBehaviour:
   tileHighlight: {fileID: 405541903}
   progressBar: {fileID: 2048107788}
   progressBarAnimator: {fileID: 2048107789}
+  pieceSelectProgressBarAnimator: {fileID: 9100000, guid: 3dd7d82a37de5f84299c095836d04326, type: 2}
+  pieceAttackProgressBarAnimator: {fileID: 9100000, guid: 74d7b053ee7c3d0468564fef3abfff74, type: 2}
   pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   ExplosionPattern: []

@@ -8,7 +8,8 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private KeyCode inputKey = KeyCode.Space;
     
-    [SerializeField] private float timeToHold = 3f;
+    [SerializeField] private float keyTapThreshold = 0.5f;
+    [SerializeField] private float keyHoldThreshold = 2f;
 
     private const int NumSteps = 5;
 
@@ -19,14 +20,11 @@ public class Player : MonoBehaviour
     private List<ChessPiece> _targetPieces = new();
     private ChessPiece _selectedTargetPiece;
     private int _selectedTargetPieceIndex = 0;
-
-    // Teph's attempt at key management
-    private bool IsKeyDown = false;
-    private float KeyTapTimer;
-    private float KeyHoldTimer;
-    public float KeyTapThreshold = 0.5f;
-    public float KeyHoldThreshold = 2f;
-
+    
+    private bool _isKeyDown = false;
+    private float _keyTapTimer;
+    private float _keyHoldTimer;
+    
     private Coroutine _currentCoroutine;
     private bool _coroutineStarted = false;
 
@@ -37,8 +35,8 @@ public class Player : MonoBehaviour
     {
         GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
         GameEvent.OnAttackTarget += Attack;
-        KeyTapTimer = KeyTapThreshold;
-        KeyHoldTimer = KeyHoldThreshold;
+        _keyTapTimer = keyTapThreshold;
+        _keyHoldTimer = keyHoldThreshold;
     }
     
     /// <summary>
@@ -56,48 +54,48 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (IsKeyDown && KeyTapTimer <= 0f)
+        if (_isKeyDown && _keyTapTimer <= 0f)
         {
-            KeyHoldTimer -= Time.deltaTime;
+            _keyHoldTimer -= Time.deltaTime;
         }
-        if (IsKeyDown && KeyTapTimer > 0f)
+        
+        if (_isKeyDown && _keyTapTimer > 0f)
         {
-            KeyTapTimer -= Time.deltaTime;
+            _keyTapTimer -= Time.deltaTime;
         }
 
-        if (KeyHoldTimer < KeyHoldThreshold && KeyHoldTimer > 0f)
+        if (_keyHoldTimer < keyHoldThreshold && _keyHoldTimer > 0f)
         {
-            // Do whatever you want with KeyDownTimer for animations
             HoldInput(LevelManager.Instance.GetInputState());
         }
-        if (KeyHoldTimer <= 0f)
+        
+        if (_keyHoldTimer <= 0f)
         {
-            // Do whatever you want when hold reaches it's threshold
-            IsKeyDown = false;
+            _isKeyDown = false;
         }
+        
         if (Input.GetKeyDown(inputKey))
         {
-            IsKeyDown = true;
+            _isKeyDown = true;
         }
 
-        if (Input.GetKeyUp(inputKey))
+        if (!Input.GetKeyUp(inputKey)) return;
+        
+        if (_isKeyDown)
         {
-            if (IsKeyDown)
+            if (_keyTapTimer > 0f)
             {
-                if (KeyTapTimer > 0f)
-                {
-                    Debug.Log("Tap Detected");
-                    TapInput(LevelManager.Instance.GetInputState());
-                }
-                if (KeyHoldTimer <= 0f)
-                {
-                    ReleaseInput(LevelManager.Instance.GetInputState());
-                }
+                TapInput(LevelManager.Instance.GetInputState());
             }
-            KeyTapTimer = KeyTapThreshold;
-            KeyHoldTimer = KeyHoldThreshold;
-            IsKeyDown = false;
+            if (_keyHoldTimer >= 0f)
+            {
+                ReleaseInput(LevelManager.Instance.GetInputState());
+            }
         }
+            
+        _keyTapTimer = keyTapThreshold;
+        _keyHoldTimer = keyHoldThreshold;
+        _isKeyDown = false;
     }
 
     /// <summary>
@@ -154,10 +152,10 @@ public class Player : MonoBehaviour
         switch (inputState)
         {
             case InputState.SelectPiece:
-                PerformReleaseInput();
+                PerformSelectedPieceReleaseInput();
                 break;
             case InputState.SelectTarget:
-                PerformReleaseInput();
+                PerformTargetPieceReleaseInput();
                 break;
             case InputState.Attack:
                 break;
@@ -185,7 +183,7 @@ public class Player : MonoBehaviour
         if (_coroutineStarted) return;
            
         _coroutineStarted = true;
-        _currentCoroutine = _selectedPlayerPiece.StartProgressBar(KeyHoldThreshold, NumSteps);
+        _currentCoroutine = _selectedPlayerPiece.StartProgressBar(keyHoldThreshold, NumSteps, true);
     }
 
     /// <summary>
@@ -213,7 +211,10 @@ public class Player : MonoBehaviour
     /// </summary>
     private void ConfirmTarget()
     {
+        if (_coroutineStarted) return;
         
+        _coroutineStarted = true;
+        _currentCoroutine = _selectedTargetPiece.StartProgressBar(keyHoldThreshold, NumSteps, false);
     }
 
     /// <summary>
@@ -241,18 +242,30 @@ public class Player : MonoBehaviour
     private void Attack(ChessPiece pieceToAttack)
     {
         _coroutineStarted = false;
+        _selectedPlayerPiece.SetHighlight(false, true);
+        _selectedTargetPiece.SetHighlight(false, false);
         // todo: spawn attack at pieceToAttack's position
         Debug.Log($"Attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");
         GameEvent.CompleteTurn();
     }
 
     /// <summary>
-    /// Interrupts and stops the progress bar animation coroutine if it is running.
+    /// Interrupts and stops the selected piece's progress bar animation coroutine if it is running.
     /// </summary>
-    private void PerformReleaseInput()
+    private void PerformSelectedPieceReleaseInput()
     {
         if (!_coroutineStarted) return;
         _selectedPlayerPiece.StopProgressBar(_currentCoroutine);
+        _coroutineStarted = false;
+    }
+    
+    /// <summary>
+    /// Interrupts and stops the target piece's progress bar animation coroutine if it is running.
+    /// </summary>
+    private void PerformTargetPieceReleaseInput()
+    {
+        if (!_coroutineStarted) return;
+        _selectedTargetPiece.StopProgressBar(_currentCoroutine);
         _coroutineStarted = false;
     }
     

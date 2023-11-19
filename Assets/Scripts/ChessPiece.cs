@@ -11,6 +11,9 @@ public class ChessPiece : MonoBehaviour
 
     [SerializeField] private Animator progressBarAnimator;
 
+    [SerializeField] private RuntimeAnimatorController pieceSelectProgressBarAnimator;
+    [SerializeField] private RuntimeAnimatorController pieceAttackProgressBarAnimator;
+
     [SerializeField] private Sprite pieceSelectHighlightSprite;
     [SerializeField] private Sprite pieceAttackHighlightSprite;
 
@@ -44,11 +47,14 @@ public class ChessPiece : MonoBehaviour
     /// <param name="timeToHold">The amount of time the player must hold the input key to complete the progress bar.
     /// </param>
     /// <param name="numSteps">The number of steps in the progress bar.</param>
+    /// <param name="green">True if the progress bar is to be set to green, false if red.</param>
     /// <returns>The progress bar animation coroutine which was started.</returns>
-    public Coroutine StartProgressBar(float timeToHold, int numSteps)
+    public Coroutine StartProgressBar(float timeToHold, int numSteps, bool green)
     {
         _timeToHold = timeToHold;
         _numSteps = numSteps;
+        progressBarAnimator.runtimeAnimatorController =
+            green ? pieceSelectProgressBarAnimator : pieceAttackProgressBarAnimator;
         progressBar.enabled = true;
         return StartCoroutine(ProgressBar(0));
     }
