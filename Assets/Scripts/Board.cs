@@ -9,7 +9,7 @@ public class Board : MonoBehaviour
     private List<ChessPiece> _playerPieces = new ();
     private List<ChessPiece> _opponentPieces = new ();
     
-    private const int NumEdgesInTile = 4;
+    public static int NumEdgesInTile = 4;
 
     /// <summary>
     /// Establishes the singleton and finds all chess pieces on the board.

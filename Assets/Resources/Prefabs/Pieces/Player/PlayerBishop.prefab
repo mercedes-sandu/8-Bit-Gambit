@@ -192,7 +192,11 @@ MonoBehaviour:
   pieceAttackProgressBarAnimator: {fileID: 9100000, guid: 74d7b053ee7c3d0468564fef3abfff74, type: 2}
   pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
-  ExplosionPattern: []
+  ExplosionPattern:
+  - {fileID: 11400000, guid: 687e026d1c3739f499054e428179e96f, type: 2}
+  - {fileID: 11400000, guid: 4db3c3e5ff3420648bd1c36dc0ce0eb6, type: 2}
+  - {fileID: 11400000, guid: eeac31cfba03e4c41b404db6e1257274, type: 2}
+  - {fileID: 11400000, guid: 86eff85c9690a844f9c3e47ae4d7b5ae, type: 2}
 --- !u!61 &1157667412222061897
 BoxCollider2D:
   m_ObjectHideFlags: 0

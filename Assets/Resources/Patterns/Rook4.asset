@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5524856de03d1744ebc72bb1c5fed034, type: 3}
   m_Name: Rook4
   m_EditorClassIdentifier: 
-  Sequence: 04000000
-  IsRepeating: 1
+  Sequence: 04000000040000000400000004000000
+  IsRepeating: 0

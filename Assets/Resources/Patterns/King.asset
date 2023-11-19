@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5524856de03d1744ebc72bb1c5fed034, type: 3}
-  m_Name: Bishop2
+  m_Name: King
   m_EditorClassIdentifier: 
-  Sequence: 060000000300000006000000030000000600000003000000
+  Sequence: 0100000002000000030000000300000004000000040000000100000001000000
   IsRepeating: 0

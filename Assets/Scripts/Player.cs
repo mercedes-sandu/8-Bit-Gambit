@@ -11,6 +11,9 @@ public class Player : MonoBehaviour
     [SerializeField] private float keyTapThreshold = 0.5f;
     [SerializeField] private float keyHoldThreshold = 2f;
 
+    public GameObject PatternOverlayPrefab;
+    private GameObject PatternOverlay;
+
     private const int NumSteps = 5;
 
     private List<ChessPiece> _pieces = new();
@@ -199,10 +202,16 @@ public class Player : MonoBehaviour
         {
             _selectedTargetPiece.SetHighlight(false, false);
         }
-        
+
         _selectedTargetPieceIndex = (_selectedTargetPieceIndex + 1) % _targetPieces.Count;
         _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
         _selectedTargetPiece.SetHighlight(true, false);
+
+        // Reparent the pattern overlay
+        if (PatternOverlay != null)
+        {
+            PatternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
+        }
     }
 
     /// <summary>
@@ -232,6 +241,11 @@ public class Player : MonoBehaviour
         _targetPieces = Board.Instance.GetOpponentPieces().Append(_selectedPlayerPiece).ToList();
         _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
         _selectedTargetPiece.SetHighlight(true, false);
+        // Setup the pattern
+        PatternOverlay =  Instantiate(PatternOverlayPrefab, _selectedTargetPiece.transform, false);
+        PatternRenderer patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
+        patternRenderer.ControllingPiece = _selectedPlayerPiece;
+        patternRenderer.DrawPattern();
     }
 
     /// <summary>
@@ -244,6 +258,7 @@ public class Player : MonoBehaviour
         _coroutineStarted = false;
         _selectedPlayerPiece.SetHighlight(false, true);
         _selectedTargetPiece.SetHighlight(false, false);
+        Destroy(PatternOverlay);
         // todo: spawn attack at pieceToAttack's position
         Debug.Log($"Attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");
         GameEvent.CompleteTurn();
