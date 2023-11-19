@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 2293834051808671530}
   m_Layer: 7
   m_Name: PlayerQueen
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
