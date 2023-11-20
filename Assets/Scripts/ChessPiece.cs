@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ChessPiece : MonoBehaviour
@@ -19,7 +20,8 @@ public class ChessPiece : MonoBehaviour
 
     private float _timeToHold;
     private int _numSteps;
-    
+    private bool _isTargeted { get; set; } = false;
+
     private static readonly int ProgressNumber = Animator.StringToHash("ProgressNumber");
 
     public ExplosionSequence[] ExplosionPattern;
@@ -106,5 +108,25 @@ public class ChessPiece : MonoBehaviour
         StopCoroutine(coroutine);
         progressBarAnimator.SetInteger(ProgressNumber, 0);
         progressBar.enabled = false;
+    }
+
+    /// <summary>
+    ///  On demand confirmation of targeted status; useful for resolving damage
+    /// </summary>
+    public void CheckIfTargeted()
+    {
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        ContactFilter2D filter = new ContactFilter2D().NoFilter();
+        List<Collider2D> results = new List<Collider2D>();
+        collider.OverlapCollider(filter, results);
+        _isTargeted = false;
+        foreach(var result  in results)
+        {
+            if (result.CompareTag("Projectile"))
+            {
+                _isTargeted = true;
+                break;
+            }
+        }
     }
 }

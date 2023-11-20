@@ -8,7 +8,8 @@ public class Board : MonoBehaviour
     
     private List<ChessPiece> _playerPieces = new ();
     private List<ChessPiece> _opponentPieces = new ();
-    
+    private List<ChessPiece> _allPieces = new ();
+
     public static int NumEdgesInTile = 4;
 
     /// <summary>
@@ -46,6 +47,7 @@ public class Board : MonoBehaviour
             {
                 _opponentPieces.Add(chessPiece);
             }
+            _allPieces.Add(chessPiece);
         }
     }
     
@@ -82,4 +84,6 @@ public class Board : MonoBehaviour
         _opponentPieces.Remove(piece);
         return _opponentPieces;
     }
+
+    public List<ChessPiece> GetAllPieces() => _allPieces;
 }

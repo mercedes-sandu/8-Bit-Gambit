@@ -9,9 +9,7 @@ public class PatternRenderer : MonoBehaviour
     public ChessPiece ControllingPiece;
     public Grid myGrid;
     private List<GameObject> Highlights = new(); // Might be simpler as a list of vec3
-    private ExplosionSequence[] Pattern;
     private GameObject HighlightRoot;
-    private bool IsReady = false;
 
     // - Add the initial prefab highlighting the root tile
     // - For each Sequence
@@ -96,7 +94,5 @@ public class PatternRenderer : MonoBehaviour
 
             }
         }
-
-        IsReady = true;
     }
 }

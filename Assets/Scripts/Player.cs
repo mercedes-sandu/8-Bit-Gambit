@@ -258,6 +258,11 @@ public class Player : MonoBehaviour
         _coroutineStarted = false;
         _selectedPlayerPiece.SetHighlight(false, true);
         _selectedTargetPiece.SetHighlight(false, false);
+        List<ChessPiece> allPieces = Board.Instance.GetAllPieces();
+        foreach (ChessPiece piece in allPieces)
+        {
+            piece.CheckIfTargeted();
+        }
         Destroy(PatternOverlay);
         // todo: spawn attack at pieceToAttack's position
         Debug.Log($"Attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");
