@@ -36,22 +36,22 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        _startButtonProgressBar = startButton.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        _quitButtonProgressBar = quitButton.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        
-        _startButtonProgressBarAnimator = startButton.GetComponent<Animator>();
-        _quitButtonProgressBarAnimator = quitButton.GetComponent<Animator>();
-        
-        startButton.sprite = buttonHighlighted;
-        quitButton.sprite = buttonNormal;
-        
-        _buttons = new List<(SpriteRenderer, SpriteRenderer, Animator)>()
-        {
-            (startButton, _startButtonProgressBar, _startButtonProgressBarAnimator),
-            (quitButton, _quitButtonProgressBar, _quitButtonProgressBarAnimator)
-        };
-        _selectedButton = (startButton, _startButtonProgressBar, _startButtonProgressBarAnimator);
-        _selectedButtonIndex = 0;
+        // _startButtonProgressBar = startButton.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        // _quitButtonProgressBar = quitButton.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        //
+        // _startButtonProgressBarAnimator = startButton.GetComponent<Animator>();
+        // _quitButtonProgressBarAnimator = quitButton.GetComponent<Animator>();
+        //
+        // startButton.sprite = buttonHighlighted;
+        // quitButton.sprite = buttonNormal;
+        //
+        // _buttons = new List<(SpriteRenderer, SpriteRenderer, Animator)>()
+        // {
+        //     (startButton, _startButtonProgressBar, _startButtonProgressBarAnimator),
+        //     (quitButton, _quitButtonProgressBar, _quitButtonProgressBarAnimator)
+        // };
+        // _selectedButton = (startButton, _startButtonProgressBar, _startButtonProgressBarAnimator);
+        // _selectedButtonIndex = 0;
     }
     
     /// <summary>
@@ -59,48 +59,48 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (_isKeyDown && _keyTapTimer <= 0f)
-        {
-            _keyHoldTimer -= Time.deltaTime;
-        }
-        
-        if (_isKeyDown && _keyTapTimer > 0f)
-        {
-            _keyTapTimer -= Time.deltaTime;
-        }
-
-        if (_keyHoldTimer < keyHoldThreshold && _keyHoldTimer > 0f)
-        {
-            HoldInput();
-        }
-        
-        if (_keyHoldTimer <= 0f)
-        {
-            _isKeyDown = false;
-        }
-        
-        if (Input.GetKeyDown(inputKey))
-        {
-            _isKeyDown = true;
-        }
-
-        if (!Input.GetKeyUp(inputKey)) return;
-        
-        if (_isKeyDown)
-        {
-            if (_keyTapTimer > 0f)
-            {
-                TapInput();
-            }
-            if (_keyHoldTimer >= 0f)
-            {
-                ReleaseInput();
-            }
-        }
-            
-        _keyTapTimer = keyTapThreshold;
-        _keyHoldTimer = keyHoldThreshold;
-        _isKeyDown = false;
+        // if (_isKeyDown && _keyTapTimer <= 0f)
+        // {
+        //     _keyHoldTimer -= Time.deltaTime;
+        // }
+        //
+        // if (_isKeyDown && _keyTapTimer > 0f)
+        // {
+        //     _keyTapTimer -= Time.deltaTime;
+        // }
+        //
+        // if (_keyHoldTimer < keyHoldThreshold && _keyHoldTimer > 0f)
+        // {
+        //     HoldInput();
+        // }
+        //
+        // if (_keyHoldTimer <= 0f)
+        // {
+        //     _isKeyDown = false;
+        // }
+        //
+        // if (Input.GetKeyDown(inputKey))
+        // {
+        //     _isKeyDown = true;
+        // }
+        //
+        // if (!Input.GetKeyUp(inputKey)) return;
+        //
+        // if (_isKeyDown)
+        // {
+        //     if (_keyTapTimer > 0f)
+        //     {
+        //         TapInput();
+        //     }
+        //     if (_keyHoldTimer >= 0f)
+        //     {
+        //         ReleaseInput();
+        //     }
+        // }
+        //     
+        // _keyTapTimer = keyTapThreshold;
+        // _keyHoldTimer = keyHoldThreshold;
+        // _isKeyDown = false;
     }
 
     /// <summary>
