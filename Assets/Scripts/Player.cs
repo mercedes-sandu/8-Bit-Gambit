@@ -13,9 +13,7 @@ public class Player : MonoBehaviour
 
     public GameObject PatternOverlayPrefab;
     private GameObject PatternOverlay;
-
-    private const int NumSteps = 5;
-
+    
     private List<ChessPiece> _pieces = new();
     private ChessPiece _selectedPlayerPiece;
     private int _selectedPlayerPieceIndex = 0;
@@ -186,7 +184,7 @@ public class Player : MonoBehaviour
         if (_coroutineStarted) return;
            
         _coroutineStarted = true;
-        _currentCoroutine = _selectedPlayerPiece.StartProgressBar(keyHoldThreshold, NumSteps, true);
+        _currentCoroutine = _selectedPlayerPiece.StartProgressBar(keyHoldThreshold, true);
     }
 
     /// <summary>
@@ -223,7 +221,7 @@ public class Player : MonoBehaviour
         if (_coroutineStarted) return;
         
         _coroutineStarted = true;
-        _currentCoroutine = _selectedTargetPiece.StartProgressBar(keyHoldThreshold, NumSteps, false);
+        _currentCoroutine = _selectedTargetPiece.StartProgressBar(keyHoldThreshold, false);
     }
 
     /// <summary>

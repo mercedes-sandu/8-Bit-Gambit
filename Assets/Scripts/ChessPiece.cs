@@ -10,22 +10,27 @@ public class ChessPiece : MonoBehaviour
     [SerializeField] private SpriteRenderer tileHighlight;
     [SerializeField] private SpriteRenderer progressBar;
 
-    [SerializeField] private Animator progressBarAnimator;
-
-    [SerializeField] private RuntimeAnimatorController pieceSelectProgressBarAnimator;
-    [SerializeField] private RuntimeAnimatorController pieceAttackProgressBarAnimator;
-
     [SerializeField] private Sprite pieceSelectHighlightSprite;
     [SerializeField] private Sprite pieceAttackHighlightSprite;
 
+    private Sprite[] _greenProgressBarSprites;
+    private Sprite[] _redProgressBarSprites;
+    
     private float _timeToHold;
     private int _numSteps;
-    private bool _isTargeted { get; set; } = false;
-
-    private static readonly int ProgressNumber = Animator.StringToHash("ProgressNumber");
+    
+    private bool IsTargeted { get; set; } = false;
 
     public ExplosionSequence[] ExplosionPattern;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    private void Start()
+    {
+        (_greenProgressBarSprites, _redProgressBarSprites) = LevelManager.Instance.GetProgressBarSprites();
+    }
+    
     /// <summary>
     /// Enables/disables the tile highlight sprite and sets it to the specified color (either green or red).
     /// </summary>
@@ -51,35 +56,36 @@ public class ChessPiece : MonoBehaviour
     /// <param name="numSteps">The number of steps in the progress bar.</param>
     /// <param name="green">True if the progress bar is to be set to green, false if red.</param>
     /// <returns>The progress bar animation coroutine which was started.</returns>
-    public Coroutine StartProgressBar(float timeToHold, int numSteps, bool green)
+    public Coroutine StartProgressBar(float timeToHold, bool green)
     {
         _timeToHold = timeToHold;
-        _numSteps = numSteps;
-        progressBarAnimator.runtimeAnimatorController =
-            green ? pieceSelectProgressBarAnimator : pieceAttackProgressBarAnimator;
+        var progressSprites = green ? _greenProgressBarSprites : _redProgressBarSprites;
+        _numSteps = progressSprites.Length;
         progressBar.enabled = true;
-        return StartCoroutine(ProgressBar(0));
+        return StartCoroutine(ProgressBar(0, progressSprites));
     }
-    
+
     /// <summary>
     /// Advances the progress bar animation step by step.
     /// </summary>
     /// <param name="progressNumber">The number corresponding to the current progress state.</param>
+    /// <param name="progressSprites"></param>
     /// <returns></returns>
-    private IEnumerator ProgressBar(int progressNumber)
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    private IEnumerator ProgressBar(int progressNumber, Sprite[] progressSprites)
     {
-        progressBarAnimator.SetInteger(ProgressNumber, progressNumber);
+        progressBar.sprite = progressSprites[progressNumber];
         
         yield return new WaitForSeconds(_timeToHold / _numSteps);
         
         progressNumber++;
         if (progressNumber < _numSteps)
         {
-            yield return ProgressBar(progressNumber);
+            yield return ProgressBar(progressNumber, progressSprites);
         }
         else
         {
-            progressBarAnimator.SetInteger(ProgressNumber, 0);
+            progressBar.sprite = progressSprites[0];
             progressBar.enabled = false;
             
             var inputState = LevelManager.Instance.GetInputState();
@@ -106,7 +112,7 @@ public class ChessPiece : MonoBehaviour
     public void StopProgressBar(Coroutine coroutine)
     {
         StopCoroutine(coroutine);
-        progressBarAnimator.SetInteger(ProgressNumber, 0);
+        progressBar.sprite = _greenProgressBarSprites[0];
         progressBar.enabled = false;
     }
 
@@ -119,12 +125,12 @@ public class ChessPiece : MonoBehaviour
         ContactFilter2D filter = new ContactFilter2D().NoFilter();
         List<Collider2D> results = new List<Collider2D>();
         collider.OverlapCollider(filter, results);
-        _isTargeted = false;
+        IsTargeted = false;
         foreach(var result  in results)
         {
             if (result.CompareTag("Projectile"))
             {
-                _isTargeted = true;
+                IsTargeted = true;
                 break;
             }
         }

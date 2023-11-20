@@ -9,6 +9,9 @@ public class LevelManager : MonoBehaviour
     private InputState _inputState = InputState.SelectPiece;
     
     private bool _isPlayerTurn = true;
+
+    private Sprite[] _greenProgressBarSprites;
+    private Sprite[] _redProgressBarSprites;
     
     /// <summary>
     /// The different input states the player and opponent can be in.
@@ -31,6 +34,9 @@ public class LevelManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
+        _greenProgressBarSprites = Resources.LoadAll<Sprite>("Sprites/Piece Progress Bars/Green Progress Bar");
+        _redProgressBarSprites = Resources.LoadAll<Sprite>("Sprites/Piece Progress Bars/Red Progress Bar");
         
         GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
         GameEvent.OnAttackTarget += Attack;
@@ -69,6 +75,12 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     /// <returns>The current input state.</returns>
     public InputState GetInputState() => _inputState;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public (Sprite[], Sprite[]) GetProgressBarSprites() => (_greenProgressBarSprites, _redProgressBarSprites);
     
     /// <summary>
     /// Unsubscribes from game events.

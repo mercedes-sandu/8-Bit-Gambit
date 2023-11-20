@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7520707586952984523}
   - component: {fileID: 7520707586952984522}
-  - component: {fileID: 7520707586952984533}
   m_Layer: 7
   m_Name: Progress Bar
   m_TagString: Untagged
@@ -85,27 +84,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!95 &7520707586952984533
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7520707586952984520}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 3dd7d82a37de5f84299c095836d04326, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7520707587326401409
 GameObject:
   m_ObjectHideFlags: 0
@@ -209,9 +187,6 @@ MonoBehaviour:
   isPlayerPiece: 1
   tileHighlight: {fileID: 7520707587776910864}
   progressBar: {fileID: 7520707586952984522}
-  progressBarAnimator: {fileID: 7520707586952984533}
-  pieceSelectProgressBarAnimator: {fileID: 9100000, guid: 3dd7d82a37de5f84299c095836d04326, type: 2}
-  pieceAttackProgressBarAnimator: {fileID: 9100000, guid: 74d7b053ee7c3d0468564fef3abfff74, type: 2}
   pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   ExplosionPattern:
