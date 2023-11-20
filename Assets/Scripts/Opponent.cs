@@ -42,8 +42,8 @@ public class Opponent : MonoBehaviour
         _selectedPieceIndex = 0;
         _selectedTargetPieceIndex = 0;
         _selectedPiece.SetHighlight(true, true);
-        // StartCoroutine(SelectPiece(Random.Range(0, _pieces.Count)));
-        StartCoroutine(SelectPiece(_pieces.Count - 1));
+        StartCoroutine(SelectPiece(Random.Range(0, _pieces.Count)));
+        // StartCoroutine(SelectPiece(_pieces.Count - 1)); // for deterministic selection
     }
     
     /// <summary>
@@ -121,8 +121,8 @@ public class Opponent : MonoBehaviour
         patternRenderer.ControllingPiece = _selectedPiece;
         patternRenderer.DrawPattern();
         
-        // StartCoroutine(SelectTarget(Random.Range(0, _targetPieces.Count)));
-        StartCoroutine(SelectTarget(_targetPieces.Count - 2));
+        StartCoroutine(SelectTarget(Random.Range(0, _targetPieces.Count)));
+        // StartCoroutine(SelectTarget(_targetPieces.Count - 2)); // for deterministic selection
     }
 
     private void Attack(ChessPiece pieceToAttack, bool isPlayer)
