@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
+using UnityEngine.Serialization;
 using InputState = LevelManager.InputState;
 
 public class Player : MonoBehaviour
@@ -34,10 +36,12 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
-        GameEvent.OnAttackTarget += Attack;
         _keyTapTimer = keyTapThreshold;
         _keyHoldTimer = keyHoldThreshold;
+        
+        GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
+        GameEvent.OnAttackTarget += Attack;
+        GameEvent.OnTurnComplete += PlayerTurn;
     }
     
     /// <summary>
@@ -45,9 +49,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        _pieces = Board.Instance.GetPlayerPieces();
-        _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
-        _selectedPlayerPiece.SetHighlight(true, true);
+        PlayerTurn();
     }
 
     /// <summary>
@@ -55,6 +57,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (!LevelManager.Instance.GetIsPlayerTurn()) return;
+        
         if (_isKeyDown && _keyTapTimer <= 0f)
         {
             _keyHoldTimer -= Time.deltaTime;
@@ -206,15 +210,11 @@ public class Player : MonoBehaviour
         _selectedTargetPiece.SetHighlight(true, false);
 
         // Reparent the pattern overlay
-        if (PatternOverlay != null)
-        {
-            PatternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
-        }
+        if (PatternOverlay) PatternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
     }
 
     /// <summary>
     /// Starts the progress bar animation for the selected target piece, only if the coroutine has not already begun.
-    /// TODO: Implement
     /// </summary>
     private void ConfirmTarget()
     {
@@ -229,8 +229,11 @@ public class Player : MonoBehaviour
     /// target pieces for the player to choose from.
     /// </summary>
     /// <param name="selectedPiece">The player's selected piece to attack with.</param>
-    private void ConfirmSelectedPiece(ChessPiece selectedPiece)
+    /// <param name="isPlayer">True if it is the player's turn, false otherwise.</param>
+    private void ConfirmSelectedPiece(ChessPiece selectedPiece, bool isPlayer)
     {
+        if (!isPlayer) return;
+        
         _coroutineStarted = false;
         _selectedPlayerPiece.SetHighlight(false, true);
         _selectedPlayerPiece = selectedPiece;
@@ -251,19 +254,23 @@ public class Player : MonoBehaviour
     /// TODO: finish implementing.
     /// </summary>
     /// <param name="pieceToAttack">The piece to attack.</param>
-    private void Attack(ChessPiece pieceToAttack)
+    /// <param name="isPlayer">True if it is the player's turn, false otherwise.</param>
+    private void Attack(ChessPiece pieceToAttack, bool isPlayer)
     {
+        if (!isPlayer) return;
+        
         _coroutineStarted = false;
         _selectedPlayerPiece.SetHighlight(false, true);
         _selectedTargetPiece.SetHighlight(false, false);
-        List<ChessPiece> allPieces = Board.Instance.GetAllPieces();
-        foreach (ChessPiece piece in allPieces)
+        
+        var allPieces = Board.Instance.GetAllPieces();
+        foreach (var piece in allPieces)
         {
             piece.CheckIfTargeted();
         }
         Destroy(PatternOverlay);
         // todo: spawn attack at pieceToAttack's position
-        Debug.Log($"Attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");
+        Debug.Log($"Player attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");
         GameEvent.CompleteTurn();
     }
 
@@ -286,6 +293,18 @@ public class Player : MonoBehaviour
         _selectedTargetPiece.StopProgressBar(_currentCoroutine);
         _coroutineStarted = false;
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void PlayerTurn()
+    {
+        if (!LevelManager.Instance.GetIsPlayerTurn()) return;
+        
+        _pieces = Board.Instance.GetPlayerPieces();
+        _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
+        _selectedPlayerPiece.SetHighlight(true, true);
+    }
     
     /// <summary>
     /// Unsubscribes from game events.
@@ -294,5 +313,6 @@ public class Player : MonoBehaviour
     {
         GameEvent.OnConfirmSelectedPiece -= ConfirmSelectedPiece;
         GameEvent.OnAttackTarget -= Attack;
+        GameEvent.OnTurnComplete -= PlayerTurn;
     }
 }

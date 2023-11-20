@@ -92,10 +92,10 @@ public class ChessPiece : MonoBehaviour
             switch (inputState)
             {
                 case LevelManager.InputState.SelectPiece:
-                    GameEvent.ConfirmSelectedPiece(this);
+                    GameEvent.ConfirmSelectedPiece(this, LevelManager.Instance.GetIsPlayerTurn());
                     break;
                 case LevelManager.InputState.SelectTarget:
-                    GameEvent.AttackTarget(this);
+                    GameEvent.AttackTarget(this, LevelManager.Instance.GetIsPlayerTurn());
                     break;
                 case LevelManager.InputState.Attack:
                     break;

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -47,7 +45,8 @@ public class LevelManager : MonoBehaviour
     /// When an attacking piece has been selected, change the input state to selecting a target piece.
     /// </summary>
     /// <param name="selectedPiece">The piece selected.</param>
-    private void ConfirmSelectedPiece(ChessPiece selectedPiece)
+    /// <param name="isPlayer">True if it is the player's turn, false otherwise.</param>
+    private void ConfirmSelectedPiece(ChessPiece selectedPiece, bool isPlayer)
     {
         _inputState = InputState.SelectTarget;
     }
@@ -56,7 +55,8 @@ public class LevelManager : MonoBehaviour
     /// When a target piece has been selected, change the input state to attacking.
     /// </summary>
     /// <param name="targetPiece">The target piece selected.</param>
-    private void Attack(ChessPiece targetPiece)
+    /// <param name="isPlayer">True if it is the player's turn, false otherwise.</param>
+    private void Attack(ChessPiece targetPiece, bool isPlayer)
     {
         _inputState = InputState.Attack;
     }
@@ -81,6 +81,12 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     /// <returns></returns>
     public (Sprite[], Sprite[]) GetProgressBarSprites() => (_greenProgressBarSprites, _redProgressBarSprites);
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public bool GetIsPlayerTurn() => _isPlayerTurn;
     
     /// <summary>
     /// Unsubscribes from game events.

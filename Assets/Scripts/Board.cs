@@ -6,11 +6,11 @@ public class Board : MonoBehaviour
 {
     public static Board Instance = null;
     
+    public const int NumEdgesInTile = 4;
+    
     private List<ChessPiece> _playerPieces = new ();
     private List<ChessPiece> _opponentPieces = new ();
     private List<ChessPiece> _allPieces = new ();
-
-    public static int NumEdgesInTile = 4;
 
     /// <summary>
     /// Establishes the singleton and finds all chess pieces on the board.
