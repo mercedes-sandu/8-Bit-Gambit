@@ -171,8 +171,8 @@ TextureImporter:
       name: board border tiles 32bit_3
       rect:
         serializedVersion: 2
-        x: 0
-        y: 32
+        x: 96
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -192,8 +192,8 @@ TextureImporter:
       name: board border tiles 32bit_4
       rect:
         serializedVersion: 2
-        x: 64
-        y: 32
+        x: 128
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -213,8 +213,8 @@ TextureImporter:
       name: board border tiles 32bit_5
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
+        x: 160
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -234,8 +234,8 @@ TextureImporter:
       name: board border tiles 32bit_6
       rect:
         serializedVersion: 2
-        x: 32
-        y: 0
+        x: 0
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -256,7 +256,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 64
-        y: 0
+        y: 32
         width: 32
         height: 32
       alignment: 0
@@ -268,6 +268,195 @@ TextureImporter:
       bones: []
       spriteID: 52ce8d04dfeb3784e83465cf13f487ee
       internalID: 1838789067
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: board border tiles 32bit_8
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 281595dab0451b7419206dbc606f1de7
+      internalID: 377899994
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: board border tiles 32bit_9
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0cc93920c795ce042bcd398d0680cb09
+      internalID: -2103595194
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: board border tiles 32bit_10
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de01aaa42f214b049bf03127cece32dd
+      internalID: 566762914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: board border tiles 32bit_11
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 75351d3eaf0caa64a964e38a6860de2a
+      internalID: -238001379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: board border tiles 32bit_12
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 61326037e467cef489746a29714fa593
+      internalID: 1311117055
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: board border tiles 32bit_13
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 066780c9ae08b704aa6fba94b1bd946a
+      internalID: 662854163
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: board border tiles 32bit_14
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: db7e5c85e2f395a44a50be8083936831
+      internalID: 1456112283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: board border tiles 32bit_15
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cf3b71fbf8ec234489a475d5759a1d4e
+      internalID: 1261969828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: board border tiles 32bit_16
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5539c7c13a337b1489bf8c89717b2e4d
+      internalID: -2088652227
       vertices: []
       indices: 
       edges: []
@@ -285,12 +474,21 @@ TextureImporter:
     nameFileIdTable:
       board border tiles 32bit_0: -1850109250
       board border tiles 32bit_1: -1443660510
+      board border tiles 32bit_10: 566762914
+      board border tiles 32bit_11: -238001379
+      board border tiles 32bit_12: 1311117055
+      board border tiles 32bit_13: 662854163
+      board border tiles 32bit_14: 1456112283
+      board border tiles 32bit_15: 1261969828
+      board border tiles 32bit_16: -2088652227
       board border tiles 32bit_2: 1210591597
       board border tiles 32bit_3: -1227626630
       board border tiles 32bit_4: 2024885055
       board border tiles 32bit_5: 1789470122
       board border tiles 32bit_6: 852567211
       board border tiles 32bit_7: 1838789067
+      board border tiles 32bit_8: 377899994
+      board border tiles 32bit_9: -2103595194
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
