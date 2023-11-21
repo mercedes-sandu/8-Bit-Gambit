@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -177,7 +178,7 @@ public class StartMenu : MonoBehaviour
                     QuitButton();
                     break;
                 default:
-                    throw new System.ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }
