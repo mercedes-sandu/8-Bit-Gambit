@@ -267,6 +267,7 @@ public class Player : MonoBehaviour
         foreach (var piece in allPieces)
         {
             piece.CheckIfTargeted();
+            piece.TakeDamage();
         }
         Destroy(PatternOverlay);
         // todo: spawn attack at pieceToAttack's position

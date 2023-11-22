@@ -18,10 +18,11 @@ public class ChessPiece : MonoBehaviour
     
     private float _timeToHold;
     private int _numSteps;
-    
+
     private bool IsTargeted { get; set; } = false;
 
     public ExplosionSequence[] ExplosionPattern;
+    public int durability = 1;
 
     /// <summary>
     /// 
@@ -133,6 +134,15 @@ public class ChessPiece : MonoBehaviour
                 IsTargeted = true;
                 break;
             }
+        }
+    }
+
+    public void TakeDamage()
+    {
+        if (IsTargeted)
+        {
+            durability--;
+            IsTargeted = false;
         }
     }
 }
