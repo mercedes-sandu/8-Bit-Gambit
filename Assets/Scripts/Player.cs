@@ -269,7 +269,7 @@ public class Player : MonoBehaviour
             piece.CheckIfTargeted();
             piece.Explode();
         }
-        Destroy(PatternOverlay);
+        PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
         Debug.Log($"Player attacking {pieceToAttack.name} at {pieceToAttack.transform.position}"); // todo: remove
         GameEvent.CompleteTurn();
     }

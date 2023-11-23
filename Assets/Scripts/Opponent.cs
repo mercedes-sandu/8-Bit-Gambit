@@ -145,8 +145,8 @@ public class Opponent : MonoBehaviour
             piece.CheckIfTargeted();
             piece.Explode();
         }
-        Destroy(PatternOverlay);
-        Debug.Log($"Opponent attacking {pieceToAttack.name} at {pieceToAttack.transform.position}"); // todo: remove
+        PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
+        Debug.Log($"Opponent attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");// todo: remove
         GameEvent.CompleteTurn();
     }
 
