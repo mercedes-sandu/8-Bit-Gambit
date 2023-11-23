@@ -114,9 +114,10 @@ public class Opponent : MonoBehaviour
         _targetPieces = Board.Instance.GetPlayerPieces().Append(_selectedPiece).ToList();
         _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
         _selectedTargetPiece.SetHighlight(true, false);
-        
+
         // setup the pattern
-        PatternOverlay =  Instantiate(PatternOverlayPrefab, _selectedTargetPiece.transform, false);
+        PatternOverlay = Instantiate(PatternOverlayPrefab, _selectedTargetPiece.transform, false);
+        PatternOverlay.transform.Rotate(new Vector3(0, 0, 180));
         PatternRenderer patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
         patternRenderer.ControllingPiece = _selectedPiece;
         patternRenderer.DrawPattern();
