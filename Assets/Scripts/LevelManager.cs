@@ -3,6 +3,8 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance = null;
+
+    [SerializeField] private InGameUI inGameUI;
     
     private InputState _inputState = InputState.SelectPiece;
     
@@ -16,7 +18,15 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public enum InputState
     {
-        SelectPiece, SelectTarget, Attack
+        SelectPiece, SelectTarget, Attack, CanvasEnabled
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum EndState
+    {
+        PlayerWon, PlayerLost, Draw
     }
     
     /// <summary>
@@ -77,16 +87,89 @@ public class LevelManager : MonoBehaviour
     public InputState GetInputState() => _inputState;
 
     /// <summary>
-    /// 
+    /// Gets the progress bar sprites.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A pair (green, red) of the progress bar sprites.</returns>
     public (Sprite[], Sprite[]) GetProgressBarSprites() => (_greenProgressBarSprites, _redProgressBarSprites);
     
     /// <summary>
-    /// 
+    /// Gets whether or not it is the player's turn.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>True if it is the player's turn, false if it is the opponent's turn.</returns>
     public bool GetIsPlayerTurn() => _isPlayerTurn;
+    
+    /// <summary>
+    /// Sets the input state to canvas enabled or selecting a piece, depending on whether level complete canvases are
+    /// enabled
+    /// </summary>
+    /// <param name="canvasEnabled">True if a canvas is enabled, false otherwise.</param>
+    public void SetCanvasEnabled(bool canvasEnabled)
+    {
+        _inputState = canvasEnabled ? InputState.CanvasEnabled : InputState.SelectPiece;
+    }
+
+    /// <summary>
+    /// Checks if the level is over and calls the appropriate event.
+    /// </summary>
+    public void CheckForLevelOver()
+    {
+        var numPlayerPieces = Board.Instance.GetPlayerPieces().Count;
+        var numOpponentPieces = Board.Instance.GetOpponentPieces().Count;
+        
+        switch (numPlayerPieces)
+        {
+            case 0 when numOpponentPieces == 0:
+                GameEvent.LevelOver(EndState.Draw);
+                break;
+            case 0:
+                GameEvent.LevelOver(EndState.PlayerLost);
+                break;
+            default:
+            {
+                if (numOpponentPieces == 0)
+                {
+                    GameEvent.LevelOver(EndState.PlayerWon);
+                }
+
+                break;
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Called by GameMaster when the player won a level to display the levelWonCanvas.
+    /// </summary>
+    public void LevelWon()
+    {
+        inGameUI.LevelWon();
+    }
+    
+    /// <summary>
+    /// Called by GameMaster when the player lost a level to display the levelLostCanvas.
+    /// </summary>
+    public void LevelLost()
+    {
+        inGameUI.LevelLost();
+    }
+    
+    /// <summary>
+    /// Called by GameMaster when the level was a draw to display the levelDrawCanvas.
+    /// </summary>
+    public void LevelDraw()
+    {
+        inGameUI.LevelDraw();
+    }
+
+    /// <summary>
+    /// Called when a piece is captured to update the UI accordingly.
+    /// </summary>
+    /// <param name="piece">The piece that was captured.</param>
+    /// <param name="playerCaptured">True if a player piece was captured, false if an opponent piece was captured.
+    /// </param>
+    public void UpdateCapturedPieces(ChessPiece piece, bool playerCaptured)
+    {
+        inGameUI.AddCapturedPiece(piece, playerCaptured);
+    }
     
     /// <summary>
     /// Unsubscribes from game events.

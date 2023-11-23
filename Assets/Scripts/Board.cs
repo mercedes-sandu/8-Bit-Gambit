@@ -12,6 +12,10 @@ public class Board : MonoBehaviour
     private List<ChessPiece> _opponentPieces = new ();
     private List<ChessPiece> _allPieces = new ();
 
+    // todo: i'm not sure if i'll actually use these or not tbh
+    private List<ChessPiece> _playerCapturedPieces = new();
+    private List<ChessPiece> _opponentCapturedPieces = new();
+
     /// <summary>
     /// Establishes the singleton and finds all chess pieces on the board.
     /// </summary>
@@ -58,14 +62,13 @@ public class Board : MonoBehaviour
     public List<ChessPiece> GetPlayerPieces() => _playerPieces;
 
     /// <summary>
-    /// Removes the specified piece from the list of player pieces and returns the modified list.
+    /// Removes the specified piece from the list of player pieces.
     /// </summary>
     /// <param name="piece">The player piece to remove.</param>
-    /// <returns>The modified player pieces list with the specified piece removed.</returns>
-    public List<ChessPiece> RemovePlayerPiece(ChessPiece piece)
+    public void RemovePlayerPiece(ChessPiece piece)
     {
         _playerPieces.Remove(piece);
-        return _playerPieces;
+        CapturePiece(piece, true);
     }
     
     /// <summary>
@@ -78,12 +81,41 @@ public class Board : MonoBehaviour
     /// Removes the specified piece from the list of opponent pieces and returns the modified list.
     /// </summary>
     /// <param name="piece">The opponent piece to remove.</param>
-    /// <returns>The modified opponent pieces list with the specified piece removed.</returns>
-    public List<ChessPiece> RemoveOpponentPiece(ChessPiece piece)
+    public void RemoveOpponentPiece(ChessPiece piece)
     {
         _opponentPieces.Remove(piece);
-        return _opponentPieces;
+        CapturePiece(piece, false);
     }
 
-    public List<ChessPiece> GetAllPieces() => _allPieces;
+    /// <summary>
+    /// Called when a piece is captured/removed. Adds the piece to the appropriate list of captured pieces and calls
+    /// for a UI update.
+    /// </summary>
+    /// <param name="piece">The piece which was captured.</param>
+    /// <param name="playerCaptured">True if the player's piece was captured, false if the opponent's piece was
+    /// captured.</param>
+    private void CapturePiece(ChessPiece piece, bool playerCaptured)
+    {
+        if (playerCaptured)
+        {
+            _playerCapturedPieces.Add(piece);
+        }
+        else
+        {
+            _opponentCapturedPieces.Add(piece);
+        }
+        
+        LevelManager.Instance.UpdateCapturedPieces(piece, playerCaptured);
+    }
+
+    /// <summary>
+    /// Gets all of the pieces on the board.
+    /// </summary>
+    /// <returns>The list of all chess pieces on the board.</returns>
+    public List<ChessPiece> GetAllPieces()
+    {
+        _allPieces.Clear();
+        FindChessPieces();
+        return _allPieces;
+    }
 }

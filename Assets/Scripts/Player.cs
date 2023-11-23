@@ -57,7 +57,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (!LevelManager.Instance.GetIsPlayerTurn()) return;
+        if (!LevelManager.Instance.GetIsPlayerTurn() ||
+            LevelManager.Instance.GetInputState() == InputState.CanvasEnabled) return;
         
         if (_isKeyDown && _keyTapTimer <= 0f)
         {
@@ -251,7 +252,6 @@ public class Player : MonoBehaviour
 
     /// <summary>
     /// Launches the player's selected piece's attack at the specified target piece to attack.
-    /// TODO: finish implementing.
     /// </summary>
     /// <param name="pieceToAttack">The piece to attack.</param>
     /// <param name="isPlayer">True if it is the player's turn, false otherwise.</param>
@@ -267,11 +267,10 @@ public class Player : MonoBehaviour
         foreach (var piece in allPieces)
         {
             piece.CheckIfTargeted();
-            piece.TakeDamage();
+            piece.Explode();
         }
         Destroy(PatternOverlay);
-        // todo: spawn attack at pieceToAttack's position
-        Debug.Log($"Player attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");
+        Debug.Log($"Player attacking {pieceToAttack.name} at {pieceToAttack.transform.position}"); // todo: remove
         GameEvent.CompleteTurn();
     }
 

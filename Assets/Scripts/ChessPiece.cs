@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ChessPiece : MonoBehaviour
@@ -12,6 +13,8 @@ public class ChessPiece : MonoBehaviour
 
     [SerializeField] private Sprite pieceSelectHighlightSprite;
     [SerializeField] private Sprite pieceAttackHighlightSprite;
+    
+    [SerializeField] private int durability = 1;
 
     private Sprite[] _greenProgressBarSprites;
     private Sprite[] _redProgressBarSprites;
@@ -19,17 +22,27 @@ public class ChessPiece : MonoBehaviour
     private float _timeToHold;
     private int _numSteps;
 
+    private CameraShake _cameraShake;
+
     private bool IsTargeted { get; set; } = false;
 
     public ExplosionSequence[] ExplosionPattern;
-    public int durability = 1;
 
     /// <summary>
-    /// 
+    /// Initializes the progress bar sprites and the camera shake component.
     /// </summary>
+    /// <exception cref="Exception"></exception>
     private void Start()
     {
         (_greenProgressBarSprites, _redProgressBarSprites) = LevelManager.Instance.GetProgressBarSprites();
+        if (Camera.main)
+        {
+            _cameraShake = Camera.main.GetComponent<CameraShake>();
+        }
+        else
+        {
+            throw new Exception("Main camera not found!");
+        }
     }
     
     /// <summary>
@@ -54,7 +67,6 @@ public class ChessPiece : MonoBehaviour
     /// </summary>
     /// <param name="timeToHold">The amount of time the player must hold the input key to complete the progress bar.
     /// </param>
-    /// <param name="numSteps">The number of steps in the progress bar.</param>
     /// <param name="green">True if the progress bar is to be set to green, false if red.</param>
     /// <returns>The progress bar animation coroutine which was started.</returns>
     public Coroutine StartProgressBar(float timeToHold, bool green)
@@ -100,6 +112,8 @@ public class ChessPiece : MonoBehaviour
                     break;
                 case LevelManager.InputState.Attack:
                     break;
+                case LevelManager.InputState.CanvasEnabled:
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -118,31 +132,55 @@ public class ChessPiece : MonoBehaviour
     }
 
     /// <summary>
-    ///  On demand confirmation of targeted status; useful for resolving damage
+    ///  On demand confirmation of targeted status; useful for resolving damage.
     /// </summary>
     public void CheckIfTargeted()
     {
-        BoxCollider2D collider = GetComponent<BoxCollider2D>();
-        ContactFilter2D filter = new ContactFilter2D().NoFilter();
-        List<Collider2D> results = new List<Collider2D>();
-        collider.OverlapCollider(filter, results);
+        var col = GetComponent<BoxCollider2D>();
+        var filter = new ContactFilter2D().NoFilter();
+        var results = new List<Collider2D>();
+        col.OverlapCollider(filter, results);
         IsTargeted = false;
-        foreach(var result  in results)
+        foreach (var result in results.Where(result => result.CompareTag("Projectile")))
         {
-            if (result.CompareTag("Projectile"))
-            {
-                IsTargeted = true;
-                break;
-            }
+            IsTargeted = true;
+            break;
         }
     }
 
+    /// <summary>
+    /// Plays an explosion on a targeted piece which is attacked and starts the camera shake effect.
+    /// </summary>
+    public void Explode()
+    {
+        if (!IsTargeted) return;
+        
+        // todo: play the animation
+        // todo: play the sound
+        GameEvent.ShakeCamera();
+    }
+
+    /// <summary>
+    /// Called by the animator when the explosion animation is complete.
+    /// </summary>
     public void TakeDamage()
     {
-        if (IsTargeted)
+        durability--;
+        if (durability <= 0)
         {
-            durability--;
-            IsTargeted = false;
+            if (isPlayerPiece)
+            {
+                Board.Instance.RemoveOpponentPiece(this);
+            }
+            else
+            {
+                Board.Instance.RemovePlayerPiece(this);
+            }
+            
+            LevelManager.Instance.CheckForLevelOver();
+            
+            Destroy(gameObject);
         }
+        IsTargeted = false;
     }
 }

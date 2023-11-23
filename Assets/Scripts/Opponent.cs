@@ -20,7 +20,7 @@ public class Opponent : MonoBehaviour
     private int _selectedTargetPieceIndex = 0;
 
     /// <summary>
-    /// 
+    /// Sets the opponent's pieces, selected piece, and subscribes to game events.
     /// </summary>
     private void Start()
     {
@@ -37,7 +37,8 @@ public class Opponent : MonoBehaviour
     /// </summary>
     private void OpponentTurn()
     {
-        if (LevelManager.Instance.GetIsPlayerTurn()) return;
+        if (LevelManager.Instance.GetIsPlayerTurn() ||
+            LevelManager.Instance.GetInputState() == LevelManager.InputState.CanvasEnabled) return;
 
         _selectedPieceIndex = 0;
         _selectedTargetPieceIndex = 0;
@@ -126,6 +127,11 @@ public class Opponent : MonoBehaviour
         // StartCoroutine(SelectTarget(_targetPieces.Count - 2)); // for deterministic selection
     }
 
+    /// <summary>
+    /// Launches the opponent's selected piece's attack at the specified target piece to attack.
+    /// </summary>
+    /// <param name="pieceToAttack">The piece to attack.</param>
+    /// <param name="isPlayer">True if it is the player's turn, false otherwise.</param>
     private void Attack(ChessPiece pieceToAttack, bool isPlayer)
     {
         if (isPlayer) return;
@@ -137,16 +143,15 @@ public class Opponent : MonoBehaviour
         foreach (var piece in allPieces)
         {
             piece.CheckIfTargeted();
-            piece.TakeDamage();
+            piece.Explode();
         }
         Destroy(PatternOverlay);
-        // todo: spawn attack at pieceToAttack's position
-        Debug.Log($"Opponent attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");
+        Debug.Log($"Opponent attacking {pieceToAttack.name} at {pieceToAttack.transform.position}"); // todo: remove
         GameEvent.CompleteTurn();
     }
 
     /// <summary>
-    /// 
+    /// Unsubscribes from game events.
     /// </summary>
     private void OnDestroy()
     {

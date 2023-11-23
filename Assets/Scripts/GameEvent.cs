@@ -14,6 +14,16 @@
     /// Handles the event when a turn has been completed.
     /// </summary>
     public delegate void TurnHandler();
+
+    /// <summary>
+    /// Handles the event in which the camera should shake.
+    /// </summary>
+    public delegate void CameraShakeHandler();
+
+    /// <summary>
+    /// Handles the event in which the level is over.
+    /// </summary>
+    public delegate void LevelOverHandler(LevelManager.EndState endState);
     
     /// <summary>
     /// The event listener for when a player has completed the progress bar animation when selecting their own piece.
@@ -30,6 +40,16 @@
     /// The event listener for when a turn has been completed.
     /// </summary>
     public static event TurnHandler OnTurnComplete;
+    
+    /// <summary>
+    /// The event listener for when the camera should shake.
+    /// </summary>
+    public static event CameraShakeHandler OnCameraShake;
+    
+    /// <summary>
+    /// The event listener for when the level is over.
+    /// </summary>
+    public static event LevelOverHandler OnLevelOver;
 
     /// <summary>
     /// The event invoker for when a player has completed the progress bar animation when selecting their own piece.
@@ -51,4 +71,15 @@
     /// The event invoker for when a turn has been completed.
     /// </summary>
     public static void CompleteTurn() => OnTurnComplete?.Invoke();
+    
+    /// <summary>
+    /// The event invoker for when the camera should shake.
+    /// </summary>
+    public static void ShakeCamera() => OnCameraShake?.Invoke();
+    
+    /// <summary>
+    /// The event invoker for when the level is over.
+    /// </summary>
+    /// <param name="endState">Whether the player won, lost, or there was a draw.</param>
+    public static void LevelOver(LevelManager.EndState endState) => OnLevelOver?.Invoke(endState);
 }
