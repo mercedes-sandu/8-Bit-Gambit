@@ -269,7 +269,7 @@ public class Player : MonoBehaviour
             piece.CheckIfTargeted();
             piece.TakeDamage();
         }
-        Destroy(PatternOverlay);
+        PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
         // todo: spawn attack at pieceToAttack's position
         Debug.Log($"Player attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");
         GameEvent.CompleteTurn();

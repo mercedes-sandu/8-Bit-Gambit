@@ -23,6 +23,22 @@ public class PatternRenderer : MonoBehaviour
     // ---- 1 == Add 1 to y; 3 == Add -1 to y
     // -- (Not really sure how I'm gonna do this beyond 4 sided-tiles. Needs math)
 
+    public void TriggerAnimations()
+    {
+        foreach (var highlight in Highlights)
+        {
+
+            Animator[] animators = GetComponentsInChildren<Animator>();
+            foreach (var animator in animators)
+            {
+                if (animator != null)
+                {
+                    animator.Play("ExplosionAnim");
+                }
+            }
+        }
+
+    }
     public void DrawPattern()
     {
         // The ROOT highlight must only be instantiated once
