@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -7,16 +8,24 @@ using UnityEngine.Tilemaps;
 public class InGameUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI turnText;
+    
+    [SerializeField] private Transform playerCapturedPiecesContainer;
+    [SerializeField] private Transform opponentCapturedPiecesContainer;
 
     [SerializeField] private Tilemap backgroundTilemap;
 
     [SerializeField] private float tileFadeTime = 0.1f;
+    [SerializeField] private float canvasFadeTime = 0.2f;
     
     [SerializeField] private Canvas levelWonCanvas;
     [SerializeField] private Canvas levelLostCanvas;
     [SerializeField] private Canvas levelDrawCanvas;
 
+    private Canvas _canvas;
+    
     private TilemapRenderer _backgroundTilemapRenderer;
+    
+    private Dictionary<string, GameObject> _pieceNameToUiPiece = new ();
     
     private bool _isPlayerTurn = true;
     
@@ -25,9 +34,35 @@ public class InGameUI : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        _canvas = GetComponent<Canvas>();
+        _canvas.enabled = false;
+        _canvas.GetComponent<CanvasGroup>().alpha = 0;
+        levelWonCanvas.enabled = false;
+        levelWonCanvas.GetComponent<CanvasGroup>().alpha = 0;
+        levelLostCanvas.enabled = false;
+        levelLostCanvas.GetComponent<CanvasGroup>().alpha = 0;
+        levelDrawCanvas.enabled = false;
+        levelDrawCanvas.GetComponent<CanvasGroup>().alpha = 0;
+        
         _backgroundTilemapRenderer = backgroundTilemap.GetComponent<TilemapRenderer>();
+        
+        InitializePieceNameToUiPieceDictionary();
+        
         GameEvent.OnTurnComplete += UpdateTurnText;
-        StartCoroutine(FadeAllTiles(false));
+        
+        StartCoroutine(FadeAllTiles(false, _canvas));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void InitializePieceNameToUiPieceDictionary()
+    {
+        var uiPieces = Resources.LoadAll<GameObject>("Prefabs/UI Pieces");
+        foreach (var uiPiece in uiPieces)
+        {
+            _pieceNameToUiPiece.Add(uiPiece.name, uiPiece);
+        }
     }
     
     /// <summary>
@@ -38,13 +73,16 @@ public class InGameUI : MonoBehaviour
         _isPlayerTurn = !_isPlayerTurn;
         turnText.text = _isPlayerTurn ? "Player's Turn" : "Opponent's Turn";
     }
+    
+    #region Fading Coroutines
 
     /// <summary>
     /// 
     /// </summary>
     /// <param name="fadeIn"></param>
+    /// <param name="canvas"></param>
     /// <returns></returns>
-    private IEnumerator FadeAllTiles(bool fadeIn)
+    private IEnumerator FadeAllTiles(bool fadeIn, Canvas canvas)
     {
         _backgroundTilemapRenderer.enabled = true;
         SetOpacityAllTiles(!fadeIn);
@@ -56,7 +94,7 @@ public class InGameUI : MonoBehaviour
             var tilePosition = new Vector3Int(x, bounds.yMax - 1, 0);
             var tile = backgroundTilemap.GetTile(tilePosition);
 
-            if (tile == null) continue;
+            if (!tile) continue;
 
             var tilesToFade = GetDiagonalTiles(tilePosition, true);
             foreach (var tileToFade in tilesToFade)
@@ -71,7 +109,7 @@ public class InGameUI : MonoBehaviour
             var tilePosition = new Vector3Int(bounds.xMax - 1, y, 0);
             var tile = backgroundTilemap.GetTile(tilePosition);
 
-            if (tile == null) continue;
+            if (!tile) continue;
 
             var tilesToFade = GetDiagonalTiles(tilePosition, false);
             foreach (var tileToFade in tilesToFade)
@@ -81,7 +119,12 @@ public class InGameUI : MonoBehaviour
             yield return new WaitForSeconds(tileFadeTime);
         }
 
-        if (!fadeIn) _backgroundTilemapRenderer.enabled = false;
+        if (!fadeIn)
+        {
+            _backgroundTilemapRenderer.enabled = false;
+            _canvas.enabled = true;
+        }
+        StartCoroutine(FadeCanvas(!fadeIn, canvas, canvas.GetComponent<CanvasGroup>()));
     }
 
     /// <summary>
@@ -164,20 +207,51 @@ public class InGameUI : MonoBehaviour
                 backgroundTilemap.SetTile(tilePosition, tile);
                 backgroundTilemap.SetTileFlags(tilePosition, TileFlags.None);
 
-                if (tile == null) continue;
+                if (!tile) continue;
                 backgroundTilemap.SetColor(tilePosition, 
                     opaque ? new Color(0.8f, 0.8f, 0.8f, 1) : new Color(0.8f, 0.8f, 0.8f, 0));
             }
         }
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fadeIn"></param>
+    /// <param name="canvas"></param>
+    /// <param name="canvasGroup"></param>
+    /// <returns></returns>
+    private IEnumerator FadeCanvas(bool fadeIn, Canvas canvas, CanvasGroup canvasGroup)
+    {
+        var originalAlpha = canvasGroup.alpha;
+        var targetAlpha = fadeIn ? 1f : 0f;
+
+        var elapsedTime = 0f;
+
+        while (elapsedTime < canvasFadeTime)
+        {
+            var alpha = Mathf.Lerp(originalAlpha, targetAlpha, elapsedTime / canvasFadeTime);
+            canvasGroup.alpha = alpha;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        canvasGroup.alpha = targetAlpha;
+        if (!fadeIn) canvas.enabled = false;
+        var levelStateCanvas = canvas.GetComponent<LevelStateCanvas>();
+        if (levelStateCanvas) levelStateCanvas.EnableCanvasInput();
+    }
+    #endregion
     
     /// <summary>
     /// When the player won the level, enable the level won canvas and set the input state to canvas enabled.
     /// </summary>
     public void LevelWon()
     {
+        StartCoroutine(FadeCanvas(false, _canvas, _canvas.GetComponent<CanvasGroup>()));
         LevelManager.Instance.SetCanvasEnabled(true);
         levelWonCanvas.enabled = true;
+        StartCoroutine(FadeAllTiles(true, levelWonCanvas));
     }
     
     /// <summary>
@@ -185,8 +259,10 @@ public class InGameUI : MonoBehaviour
     /// </summary>
     public void LevelLost()
     {
+        StartCoroutine(FadeCanvas(false, _canvas, _canvas.GetComponent<CanvasGroup>()));
         LevelManager.Instance.SetCanvasEnabled(true);
         levelLostCanvas.enabled = true;
+        StartCoroutine(FadeAllTiles(true, levelLostCanvas));
     }
     
     /// <summary>
@@ -194,17 +270,10 @@ public class InGameUI : MonoBehaviour
     /// </summary>
     public void LevelDraw()
     {
+        StartCoroutine(FadeCanvas(false, _canvas, _canvas.GetComponent<CanvasGroup>()));
         LevelManager.Instance.SetCanvasEnabled(true);
         levelDrawCanvas.enabled = true;
-    }
-
-    /// <summary>
-    /// Called by buttons in levelWonCanvas, levelLostCanvas, and levelDrawCanvas to load the appropriate next level
-    /// or reload the current level.
-    /// </summary>
-    public void LoadLevel()
-    {
-        GameMaster.LoadLevel();
+        StartCoroutine(FadeAllTiles(true, levelDrawCanvas));
     }
 
     /// <summary>
@@ -215,6 +284,12 @@ public class InGameUI : MonoBehaviour
     /// </param>
     public void AddCapturedPiece(ChessPiece piece, bool playerCaptured)
     {
-        // todo: add the captured piece to the right ui container
+        // string formatting for dictionary purposes
+        var pieceName = piece.name.Contains("(")
+            ? piece.name[..piece.name.IndexOf("(", StringComparison.Ordinal)]
+            : piece.name;
+
+        Instantiate(_pieceNameToUiPiece[pieceName],
+            playerCaptured ? opponentCapturedPiecesContainer : playerCapturedPiecesContainer);
     }
 }

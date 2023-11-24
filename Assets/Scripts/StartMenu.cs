@@ -58,6 +58,9 @@ public class StartMenu : MonoBehaviour
         };
         _selectedButton = (startButton, _startButtonProgressBar);
         _selectedButtonIndex = 0;
+        
+        _keyTapTimer = keyTapThreshold;
+        _keyHoldTimer = keyHoldThreshold;
     }
     
     /// <summary>
@@ -140,6 +143,7 @@ public class StartMenu : MonoBehaviour
     private void ReleaseInput()
     {
         if (!_coroutineStarted) return;
+        
         StopCoroutine(_currentCoroutine);
         _selectedButton.Item1.sprite = buttonHighlighted;
         _selectedButton.Item2.sprite = _progressBarSprites[0];
