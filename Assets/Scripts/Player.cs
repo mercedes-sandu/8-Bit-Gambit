@@ -179,6 +179,7 @@ public class Player : MonoBehaviour
         _selectedPlayerPieceIndex = (_selectedPlayerPieceIndex + 1) % _pieces.Count;
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
         _selectedPlayerPiece.SetHighlight(true, true);
+        GameEvent.PlayerTogglePiece(_selectedPlayerPiece);
     }
 
     /// <summary>
@@ -304,6 +305,7 @@ public class Player : MonoBehaviour
         _pieces = Board.Instance.GetPlayerPieces();
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
         _selectedPlayerPiece.SetHighlight(true, true);
+        GameEvent.PlayerTogglePiece(_selectedPlayerPiece);
     }
     
     /// <summary>

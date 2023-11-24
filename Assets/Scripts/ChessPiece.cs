@@ -22,27 +22,19 @@ public class ChessPiece : MonoBehaviour
     private float _timeToHold;
     private int _numSteps;
 
-    private CameraShake _cameraShake;
+    private int _currentDurability;
 
     private bool IsTargeted { get; set; } = false;
 
     public ExplosionSequence[] ExplosionPattern;
 
     /// <summary>
-    /// Initializes the progress bar sprites and the camera shake component.
+    /// Initializes the progress bar sprites and current durability of the piece.
     /// </summary>
-    /// <exception cref="Exception"></exception>
     private void Start()
     {
         (_greenProgressBarSprites, _redProgressBarSprites) = LevelManager.Instance.GetProgressBarSprites();
-        if (Camera.main)
-        {
-            _cameraShake = Camera.main.GetComponent<CameraShake>();
-        }
-        else
-        {
-            throw new Exception("Main camera not found!");
-        }
+        _currentDurability = durability;
     }
     
     /// <summary>
@@ -155,15 +147,14 @@ public class ChessPiece : MonoBehaviour
     {
         if (!IsTargeted) return;
         
-        // todo: play the animation
-        // todo: play the sound
+        TakeDamage();
         GameEvent.ShakeCamera();
     }
 
     /// <summary>
     /// Called by the animator when the explosion animation is complete.
     /// </summary>
-    public void TakeDamage()
+    private void TakeDamage()
     {
         durability--;
         if (durability <= 0)
@@ -183,4 +174,16 @@ public class ChessPiece : MonoBehaviour
         }
         IsTargeted = false;
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public int GetDurability() => durability;
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public int GetCurrentDurability() => _currentDurability;
 }

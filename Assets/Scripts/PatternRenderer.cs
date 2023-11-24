@@ -23,22 +23,24 @@ public class PatternRenderer : MonoBehaviour
     // ---- 1 == Add 1 to y; 3 == Add -1 to y
     // -- (Not really sure how I'm gonna do this beyond 4 sided-tiles. Needs math)
 
+    /// <summary>
+    /// 
+    /// </summary>
     public void TriggerAnimations()
     {
-        foreach (var highlight in Highlights)
+        foreach (var animator in from highlight in Highlights
+                 select GetComponentsInChildren<Animator>()
+                 into animators
+                 from animator in animators
+                 where animator
+                 select animator)
         {
-
-            Animator[] animators = GetComponentsInChildren<Animator>();
-            foreach (var animator in animators)
-            {
-                if (animator != null)
-                {
-                    animator.Play("ExplosionAnim");
-                }
-            }
+            animator.Play("ExplosionAnim");
         }
-
     }
+    /// <summary>
+    /// 
+    /// </summary>
     public void DrawPattern()
     {
         // The ROOT highlight must only be instantiated once
@@ -47,7 +49,7 @@ public class PatternRenderer : MonoBehaviour
         // Add new highlight to the list
         foreach (var pattern in ControllingPiece.ExplosionPattern)
         {
-            if (HighlightRoot == null)
+            if (!HighlightRoot)
             {
                 // transform will always equal the parented object's transform
                 // Attach the ROOT highlight to this transform
@@ -56,28 +58,22 @@ public class PatternRenderer : MonoBehaviour
             }
             for (var i = 0; i < pattern.Sequence.Length; i++)
             {
-                Transform transformStart;
                 // Set the new transform to start from EITHER ROOT or LAST ADDED GAMEOBJECT
-                if (i == 0)
-                {
-                    transformStart = HighlightRoot.transform;
-                }
-                else
-                {
-                    transformStart = Highlights.Last<GameObject>().transform;
-                }
-                // Determine if this higlight is to be skipped
-                int numEdges = Board.NumEdgesInTile;
-                int edgeNum = pattern.Sequence[i] - numEdges;
-                bool isSkipped = edgeNum > 0;
-                int switchNum = pattern.Sequence[i];
+                var transformStart = i == 0 ? HighlightRoot.transform : Highlights.Last<GameObject>().transform;
+
+                // Determine if this highlight is to be skipped
+                const int numEdges = Board.NumEdgesInTile;
+                var edgeNum = pattern.Sequence[i] - numEdges;
+                var isSkipped = edgeNum > 0;
+                var switchNum = pattern.Sequence[i];
                 if (isSkipped)
                 {
                     switchNum = edgeNum;
                 }
+                
                 // Setup the new Transform
-                float newX = transformStart.localPosition.x;
-                float newY = transformStart.localPosition.y;
+                var newX = transformStart.localPosition.x;
+                var newY = transformStart.localPosition.y;
                 switch (switchNum)
                 {
                     case 1:
@@ -95,19 +91,22 @@ public class PatternRenderer : MonoBehaviour
                     default:
                         break;
                 }
+                
                 // Create the new Transform from our calculations
-                Vector3 newTransform = new Vector3(newX, newY, transform.position.z);
+                var newTransform = new Vector3(newX, newY, transform.position.z);
+                
                 // Create the new Highlight to be saved; parent to this GameObject
-                GameObject newHighlight = Instantiate(PatternHighlightPrefab, transform, false);
+                var newHighlight = Instantiate(PatternHighlightPrefab, transform, false);
+                
                 // Adjust it's transform by our calculations
                 newHighlight.transform.SetLocalPositionAndRotation(newTransform, transform.rotation);
                 if (isSkipped)
                 {
                     newHighlight.SetActive(false);
                 }
+                
                 // Add to the list
                 Highlights.Add(newHighlight);
-
             }
         }
     }

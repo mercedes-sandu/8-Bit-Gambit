@@ -78,6 +78,7 @@ public class LevelManager : MonoBehaviour
     {
         _isPlayerTurn = !_isPlayerTurn;
         _inputState = InputState.SelectPiece;
+        inGameUI.FadeDetailsPanel(_isPlayerTurn);
     }
     
     /// <summary>

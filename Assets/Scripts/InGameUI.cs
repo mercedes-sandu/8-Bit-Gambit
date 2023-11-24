@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class InGameUI : MonoBehaviour
 {
@@ -20,17 +21,39 @@ public class InGameUI : MonoBehaviour
     [SerializeField] private Canvas levelWonCanvas;
     [SerializeField] private Canvas levelLostCanvas;
     [SerializeField] private Canvas levelDrawCanvas;
+    
+    // details panel UI
+    [SerializeField] private Image detailsPanel;
+    [SerializeField] private TextMeshProUGUI pieceNameText;
+    [SerializeField] private TextMeshProUGUI durabilityText;
+    [SerializeField] private Image[] durabilityCircleImages;
+    [SerializeField] private Image attackPatternImage;
+    
+    [SerializeField] private Sprite circleFilledSprite;
+    [SerializeField] private Sprite circleEmptySprite;
 
     private Canvas _canvas;
     
     private TilemapRenderer _backgroundTilemapRenderer;
     
     private Dictionary<string, GameObject> _pieceNameToUiPiece = new ();
+    private Dictionary<string, Sprite> _pieceNameToAttackPatternSprite = new ();
     
     private bool _isPlayerTurn = true;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void Awake()
+    {
+        InitializeDictionaries();
+        
+        GameEvent.OnTurnComplete += UpdateTurnText;
+        GameEvent.OnPlayerTogglePiece += UpdateDetailsPanel;
+    }
     
     /// <summary>
-    /// Starts the overlay tilemap fade out coroutine, and subscribes to the OnTurnComplete event.
+    /// 
     /// </summary>
     private void Start()
     {
@@ -46,22 +69,24 @@ public class InGameUI : MonoBehaviour
         
         _backgroundTilemapRenderer = backgroundTilemap.GetComponent<TilemapRenderer>();
         
-        InitializePieceNameToUiPieceDictionary();
-        
-        GameEvent.OnTurnComplete += UpdateTurnText;
-        
         StartCoroutine(FadeAllTiles(false, _canvas));
     }
 
     /// <summary>
     /// 
     /// </summary>
-    private void InitializePieceNameToUiPieceDictionary()
+    private void InitializeDictionaries()
     {
         var uiPieces = Resources.LoadAll<GameObject>("Prefabs/UI Pieces");
         foreach (var uiPiece in uiPieces)
         {
             _pieceNameToUiPiece.Add(uiPiece.name, uiPiece);
+        }
+        
+        var attackPatternSprites = Resources.LoadAll<Sprite>("Sprites/Attack Patterns");
+        foreach (var attackPatternSprite in attackPatternSprites)
+        {
+            _pieceNameToAttackPatternSprite.Add(attackPatternSprite.name, attackPatternSprite);
         }
     }
     
@@ -241,6 +266,54 @@ public class InGameUI : MonoBehaviour
         var levelStateCanvas = canvas.GetComponent<LevelStateCanvas>();
         if (levelStateCanvas) levelStateCanvas.EnableCanvasInput();
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fadeIn"></param>
+    public void FadeDetailsPanel(bool fadeIn)
+    {
+        StartCoroutine(FadeAllDetailsPanelObjects(fadeIn));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="fadeIn"></param>
+    /// <returns></returns>
+    private IEnumerator FadeAllDetailsPanelObjects(bool fadeIn)
+    {
+        var originalAlpha = detailsPanel.color.a;
+        var targetAlpha = fadeIn ? 1f : 0f;
+        
+        var elapsedTime = 0f;
+        
+        while (elapsedTime < canvasFadeTime)
+        {
+            var alpha = Mathf.Lerp(originalAlpha, targetAlpha, elapsedTime / canvasFadeTime);
+            detailsPanel.color = new Color(1, 1, 1, alpha);
+            pieceNameText.color = new Color(1, 1, 1, alpha);
+            durabilityText.color = new Color(1, 1, 1, alpha);
+            foreach (var durabilityCircleImage in durabilityCircleImages)
+            {
+                if (durabilityCircleImage.gameObject.activeSelf)
+                    durabilityCircleImage.color = new Color(1, 1, 1, alpha);
+            }
+            attackPatternImage.color = new Color(1, 1, 1, alpha);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        detailsPanel.color = new Color(1, 1, 1, targetAlpha);
+        pieceNameText.color = new Color(1, 1, 1, targetAlpha);
+        durabilityText.color = new Color(1, 1, 1, targetAlpha);
+        foreach (var durabilityCircleImage in durabilityCircleImages)
+        {
+            if (durabilityCircleImage.gameObject.activeSelf)
+                durabilityCircleImage.color = new Color(1, 1, 1, targetAlpha);
+        }
+        attackPatternImage.color = new Color(1, 1, 1, targetAlpha);
+    }
     #endregion
     
     /// <summary>
@@ -291,5 +364,68 @@ public class InGameUI : MonoBehaviour
 
         Instantiate(_pieceNameToUiPiece[pieceName],
             playerCaptured ? opponentCapturedPiecesContainer : playerCapturedPiecesContainer);
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="pieceName"></param>
+    /// <returns></returns>
+    private string FormatPieceName(string pieceName)
+    {
+        // get the indices of the capital letters
+        var capitalLetterIndices = new List<int>();
+        for (var i = 0; i < pieceName.Length; i++)
+        {
+            if (char.IsUpper(pieceName[i])) capitalLetterIndices.Add(i);
+        }
+        
+        // just get the name of the piece (excluding "Player" or "Opponent")
+        pieceName = 
+            pieceName.Substring(capitalLetterIndices[1], pieceName.Length - capitalLetterIndices[1]);
+        
+        // remove the "(Clone)" part of the name, if it's there
+        pieceName = pieceName.Contains("(")
+            ? pieceName[..pieceName.IndexOf("(", StringComparison.Ordinal)]
+            : pieceName;
+
+        return pieceName;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="selectedPiece"></param>
+    private void UpdateDetailsPanel(ChessPiece selectedPiece)
+    {
+        var pieceName = FormatPieceName(selectedPiece.name);
+        pieceNameText.text = pieceName.ToUpper();
+
+        var durability = selectedPiece.GetDurability();
+        var currentDurability = selectedPiece.GetCurrentDurability();
+
+        for (var i = 0; i < durabilityCircleImages.Length; i++)
+        {
+            if (i < durability)
+            {
+                durabilityCircleImages[i].sprite = i < currentDurability ? circleFilledSprite : circleEmptySprite;
+                durabilityCircleImages[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                durabilityCircleImages[i].gameObject.SetActive(false);
+            }
+        }
+        
+        attackPatternImage.sprite = _pieceNameToAttackPatternSprite[pieceName];
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnDestroy()
+    {
+        GameEvent.OnTurnComplete -= UpdateTurnText;
+        GameEvent.OnPlayerTogglePiece -= UpdateDetailsPanel;
     }
 }

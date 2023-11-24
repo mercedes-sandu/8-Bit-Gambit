@@ -26,6 +26,11 @@
     public delegate void LevelOverHandler(LevelManager.EndState endState);
     
     /// <summary>
+    /// Handles the event in which the player is toggling between their pieces during their turn.
+    /// </summary>
+    public delegate void PlayerTogglePieceHandler(ChessPiece selectedPiece);
+    
+    /// <summary>
     /// The event listener for when a player has completed the progress bar animation when selecting their own piece.
     /// </summary>
     public static event ConfirmSelectedPieceHandler OnConfirmSelectedPiece;
@@ -50,6 +55,11 @@
     /// The event listener for when the level is over.
     /// </summary>
     public static event LevelOverHandler OnLevelOver;
+    
+    /// <summary>
+    /// The event listener for when the player toggles between their pieces.
+    /// </summary>
+    public static event PlayerTogglePieceHandler OnPlayerTogglePiece;
 
     /// <summary>
     /// The event invoker for when a player has completed the progress bar animation when selecting their own piece.
@@ -82,4 +92,10 @@
     /// </summary>
     /// <param name="endState">Whether the player won, lost, or there was a draw.</param>
     public static void LevelOver(LevelManager.EndState endState) => OnLevelOver?.Invoke(endState);
+    
+    /// <summary>
+    /// The event invoker for when the player toggles between their pieces.
+    /// </summary>
+    /// <param name="selectedPiece">The current selected piece.</param>
+    public static void PlayerTogglePiece(ChessPiece selectedPiece) => OnPlayerTogglePiece?.Invoke(selectedPiece);
 }
