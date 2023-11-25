@@ -18,13 +18,14 @@ public class ChessPiece : MonoBehaviour
 
     private Sprite[] _greenProgressBarSprites;
     private Sprite[] _redProgressBarSprites;
-    
+    private SpriteRenderer sr;
     private float _timeToHold;
     private int _numSteps;
 
     private int _currentDurability;
 
     private bool IsTargeted { get; set; } = false;
+    private Color initColor;
 
     public ExplosionSequence[] ExplosionPattern;
 
@@ -35,8 +36,33 @@ public class ChessPiece : MonoBehaviour
     {
         (_greenProgressBarSprites, _redProgressBarSprites) = LevelManager.Instance.GetProgressBarSprites();
         _currentDurability = durability;
+        sr = GetComponent<SpriteRenderer>();
+        if (sr != null )
+        {
+            initColor = sr.color;
+        }
     }
-    
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (sr != null && collision.CompareTag("Projectile") )
+        {
+            float iLVal = Mathf.Cos(Time.time * 8);
+            float tVal = Mathf.InverseLerp(-1, 1, iLVal); // 0-1
+            float gbChannelVal = Mathf.Lerp(0, 1, tVal);
+            Color newColor = new Color(1, gbChannelVal, gbChannelVal, 1);
+            sr.color = newColor;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (initColor != null)
+        {
+            sr.color = initColor;
+        }
+    }
+
     /// <summary>
     /// Enables/disables the tile highlight sprite and sets it to the specified color (either green or red).
     /// </summary>
