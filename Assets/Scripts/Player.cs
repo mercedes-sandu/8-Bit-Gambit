@@ -213,6 +213,12 @@ public class Player : MonoBehaviour
 
         // Reparent the pattern overlay
         if (PatternOverlay) PatternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
+
+        var allPieces = Board.Instance.GetAllPieces();
+        foreach (var piece in allPieces)
+        {
+            piece.CheckIfTargeted(); // Utilizing this flag to swap shaders on pieces
+        }
     }
 
     /// <summary>
@@ -249,6 +255,12 @@ public class Player : MonoBehaviour
         PatternRenderer patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
         patternRenderer.ControllingPiece = _selectedPlayerPiece;
         patternRenderer.DrawPattern();
+
+        var allPieces = Board.Instance.GetAllPieces();
+        foreach (var piece in allPieces)
+        {
+            piece.CheckIfTargeted(); // Utilizing this flag to swap shaders on pieces
+        }
     }
 
     /// <summary>

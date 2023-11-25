@@ -94,7 +94,11 @@ public class Opponent : MonoBehaviour
             
             // reparent the pattern overlay
             if (PatternOverlay) PatternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
-            
+            var allPieces = Board.Instance.GetAllPieces();
+            foreach (var piece in allPieces)
+            {
+                piece.CheckIfTargeted(); // Utilizing this flag to swap shaders on pieces
+            }
             yield return SelectTarget(indexToSelect);
         }
     }
@@ -122,7 +126,13 @@ public class Opponent : MonoBehaviour
         PatternRenderer patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
         patternRenderer.ControllingPiece = _selectedPiece;
         patternRenderer.DrawPattern();
-        
+
+
+        var allPieces = Board.Instance.GetAllPieces();
+        foreach (var piece in allPieces)
+        {
+            piece.CheckIfTargeted(); // Utilizing this flag to swap shaders on pieces
+        }
         StartCoroutine(SelectTarget(Random.Range(0, _targetPieces.Count)));
         // StartCoroutine(SelectTarget(_targetPieces.Count - 2)); // for deterministic selection
     }
