@@ -46,4 +46,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   delayBetweenTaps: 0.5
   confirmPieceTime: 2
-  PatternOverlayPrefab: {fileID: 1400890759016728014, guid: 410b9b6e9a8faee43860b9fe24303012, type: 3}
+  patternOverlayPrefab: {fileID: 1400890759016728014, guid: 410b9b6e9a8faee43860b9fe24303012, type: 3}

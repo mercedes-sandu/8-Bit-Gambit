@@ -8,8 +8,8 @@ public class Opponent : MonoBehaviour
     [SerializeField] private float delayBetweenTaps = 0.5f;
     [SerializeField] private float confirmPieceTime = 2f;
 
-    public GameObject PatternOverlayPrefab;
-    private GameObject PatternOverlay;
+    [SerializeField] private GameObject patternOverlayPrefab;
+    private GameObject _patternOverlay;
     
     private List<ChessPiece> _pieces = new();
     private ChessPiece _selectedPiece;
@@ -120,7 +120,7 @@ public class Opponent : MonoBehaviour
             _selectedTargetPiece.SetHighlight(true, false);
             
             // reparent the pattern overlay
-            if (PatternOverlay) PatternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
+            if (_patternOverlay) _patternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
             
             yield return SelectTarget(indexToSelect);
         }
@@ -144,9 +144,9 @@ public class Opponent : MonoBehaviour
         _selectedTargetPiece.SetHighlight(true, false);
 
         // setup the pattern
-        PatternOverlay = Instantiate(PatternOverlayPrefab, _selectedTargetPiece.transform, false);
-        PatternOverlay.transform.Rotate(new Vector3(0, 0, 180));
-        PatternRenderer patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
+        _patternOverlay = Instantiate(patternOverlayPrefab, _selectedTargetPiece.transform, false);
+        _patternOverlay.transform.Rotate(new Vector3(0, 0, 180));
+        var patternRenderer = _patternOverlay.GetComponent<PatternRenderer>();
         patternRenderer.SetControllingPiece(_selectedPiece);
         patternRenderer.DrawPattern(true);
         
@@ -166,7 +166,7 @@ public class Opponent : MonoBehaviour
         _selectedPiece.SetHighlight(false, true);
         _selectedTargetPiece.SetHighlight(false, false);
         
-        PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
+        _patternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
 
         var allPieces = Board.Instance.GetAllPieces().ToList();
         foreach (var piece in allPieces)

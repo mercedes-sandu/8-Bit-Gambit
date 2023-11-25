@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
-using UnityEngine.Serialization;
 using InputState = LevelManager.InputState;
 
 public class Player : MonoBehaviour
@@ -13,8 +11,8 @@ public class Player : MonoBehaviour
     [SerializeField] private float keyTapThreshold = 0.5f;
     [SerializeField] private float keyHoldThreshold = 2f;
 
-    public GameObject PatternOverlayPrefab;
-    private GameObject PatternOverlay;
+    [SerializeField] private GameObject patternOverlayPrefab;
+    private GameObject _patternOverlay;
     
     private List<ChessPiece> _pieces = new();
     private ChessPiece _selectedPlayerPiece;
@@ -122,6 +120,8 @@ public class Player : MonoBehaviour
                 break;
             case InputState.Attack:
                 break;
+            case InputState.CanvasEnabled:
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -144,6 +144,8 @@ public class Player : MonoBehaviour
                 break;
             case InputState.Attack:
                 break;
+            case InputState.CanvasEnabled:
+                break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
@@ -165,6 +167,8 @@ public class Player : MonoBehaviour
                 PerformTargetPieceReleaseInput();
                 break;
             case InputState.Attack:
+                break;
+            case InputState.CanvasEnabled:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -213,7 +217,7 @@ public class Player : MonoBehaviour
         _selectedTargetPiece.SetHighlight(true, false);
 
         // Reparent the pattern overlay
-        if (PatternOverlay) PatternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
+        if (_patternOverlay) _patternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
         
         GameEvent.PlayerTogglePiece(_selectedTargetPiece, InputState.SelectTarget);
     }
@@ -250,8 +254,8 @@ public class Player : MonoBehaviour
         GameEvent.PlayerTogglePiece(_selectedTargetPiece, InputState.SelectTarget);
         
         // Setup the pattern
-        PatternOverlay =  Instantiate(PatternOverlayPrefab, _selectedTargetPiece.transform, false);
-        var patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
+        _patternOverlay =  Instantiate(patternOverlayPrefab, _selectedTargetPiece.transform, false);
+        var patternRenderer = _patternOverlay.GetComponent<PatternRenderer>();
         patternRenderer.SetControllingPiece(_selectedPlayerPiece);
         patternRenderer.DrawPattern(true);
     }
@@ -265,7 +269,7 @@ public class Player : MonoBehaviour
     {
         if (!isPlayer) return;
         
-        PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
+        _patternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
 
         _coroutineStarted = false;
         _selectedPlayerPiece.SetHighlight(false, true);
