@@ -16,9 +16,11 @@ public class ChessPiece : MonoBehaviour
     
     [SerializeField] private int durability = 1;
 
+    private BoxCollider2D _col;
+    
     private Sprite[] _greenProgressBarSprites;
     private Sprite[] _redProgressBarSprites;
-    private SpriteRenderer sr;
+    private SpriteRenderer _sr;
     private float _timeToHold;
     private int _numSteps;
 
@@ -36,11 +38,9 @@ public class ChessPiece : MonoBehaviour
     {
         (_greenProgressBarSprites, _redProgressBarSprites) = LevelManager.Instance.GetProgressBarSprites();
         _currentDurability = durability;
-        sr = GetComponent<SpriteRenderer>();
-        if (sr != null )
-        {
-            _initColor = sr.color;
-        }
+        _sr = GetComponent<SpriteRenderer>();
+        _col = GetComponent<BoxCollider2D>();
+        if (_sr) _initColor = _sr.color;
     }
 
     /// <summary>
@@ -49,12 +49,13 @@ public class ChessPiece : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (sr == null || !collision.CompareTag("Projectile")) return;
+        if (!_sr || !collision.CompareTag("Projectile")) return;
+        
         var iLVal = Mathf.Cos(Time.time * 8);
         var tVal = Mathf.InverseLerp(-1, 1, iLVal); // 0-1
         var gbChannelVal = Mathf.Lerp(0, 1, tVal);
         var newColor = new Color(1, gbChannelVal, gbChannelVal, 1);
-        sr.color = newColor;
+        _sr.color = newColor;
     }
 
     /// <summary>
@@ -63,7 +64,9 @@ public class ChessPiece : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerExit2D(Collider2D collision)
     {
-        sr.color = _initColor;
+        if (!_sr) return;
+        
+        _sr.color = _initColor;
     }
 
     /// <summary>
@@ -155,18 +158,19 @@ public class ChessPiece : MonoBehaviour
     /// <summary>
     ///  On demand confirmation of targeted status; useful for resolving damage.
     /// </summary>
-    public void CheckIfTargeted()
+    public bool CheckIfTargeted(bool modifyTargetedStatus)
     {
-        var col = GetComponent<BoxCollider2D>();
-        var filter = new ContactFilter2D().NoFilter();
-        var results = new List<Collider2D>();
-        col.OverlapCollider(filter, results);
-        IsTargeted = false;
-        foreach (var result in results.Where(result => result.CompareTag("Projectile")))
+        var col = Physics2D.OverlapBox(transform.position, _col.size, 0, 
+            LayerMask.GetMask("RedHighlight"));
+        
+        if (col)
         {
-            IsTargeted = true;
-            break;
+            if (modifyTargetedStatus) IsTargeted = true;
+            return true;
         }
+
+        if (modifyTargetedStatus) IsTargeted = false;
+        return false;
     }
 
     /// <summary>

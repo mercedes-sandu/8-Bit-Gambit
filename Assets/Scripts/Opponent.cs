@@ -18,6 +18,12 @@ public class Opponent : MonoBehaviour
     private List<ChessPiece> _targetPieces = new();
     private ChessPiece _selectedTargetPiece;
     private int _selectedTargetPieceIndex = 0;
+    
+    // heuristic variables
+    private (int, int) _bestPieces; // Item1 = piece index, Item2 = target index
+    
+    // calculated by subtracting damage done to player pieces minus damage done to opponent pieces
+    private int _bestNetDamage = -1;
 
     /// <summary>
     /// Sets the opponent's pieces, selected piece, and subscribes to game events.
@@ -44,8 +50,8 @@ public class Opponent : MonoBehaviour
         _selectedTargetPieceIndex = 0;
         _selectedPiece = _pieces[_selectedPieceIndex];
         _selectedPiece.SetHighlight(true, true);
-        StartCoroutine(SelectPiece(Random.Range(0, _pieces.Count - 1)));
-        // StartCoroutine(SelectPiece(_pieces.Count - 1)); // for deterministic selection
+        FindBestPieces(_selectedPiece, _selectedPieceIndex);
+        StartCoroutine(LoopThroughAllPieces());
     }
     
     /// <summary>
@@ -60,18 +66,87 @@ public class Opponent : MonoBehaviour
         _pieces.Clear();
         _pieces = Board.Instance.GetOpponentPieces().ToList();
     }
-
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator LoopThroughAllPieces()
     {
         yield return new WaitForSeconds(delayBetweenTaps);
-        
-        _selectedPiece.SetHighlight(false, true);
-        _selectedPieceIndex++;
-        _selectedPiece = _pieces[_selectedPieceIndex];
-        _selectedPiece.SetHighlight(true, true);
 
-        var bestPieceIndex = 0;// todo: implement
-        yield return SelectPiece(bestPieceIndex);
+        if (_selectedPieceIndex == _pieces.Count)
+        {
+            _selectedPieceIndex = -1;
+            yield return SelectPiece(_bestPieces.Item1);
+        }
+        else
+        {
+            _selectedPiece.SetHighlight(false, true);
+            _selectedPieceIndex++;
+            _selectedPiece = _pieces[_selectedPieceIndex];
+            _selectedPiece.SetHighlight(true, true);
+            FindBestPieces(_selectedPiece, _selectedPieceIndex);
+            yield return LoopThroughAllPieces();
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void FindBestPieces(ChessPiece currentPiece, int indexOfCurrentPiece)
+    {
+        var targets = Board.Instance.GetPlayerPieces().ToList().Append(currentPiece).ToList();
+        Debug.Log($"targets: {string.Join(", ", targets)}");
+        // for (var j = 0; j < targets.Count; j++)
+        // {
+            // var currentTarget = targets[j];
+        var currentTarget = targets[0];
+        var patternOverlay = Instantiate(patternOverlayPrefab, currentTarget.transform, false);
+        patternOverlay.transform.Rotate(new Vector3(0, 0, 180));
+        var patternRenderer = patternOverlay.GetComponent<PatternRenderer>();
+        patternRenderer.SetControllingPiece(currentPiece);
+        patternRenderer.DrawPattern(true); // todo: change to false
+        patternRenderer.transform.SetParent(currentTarget.transform, false);
+        var allPieces = Board.Instance.GetAllPieces().ToList();
+        var targetedPieces = new List<ChessPiece>();
+        foreach (var piece in allPieces)
+        {
+            var isTargeted = piece.CheckIfTargeted(false);
+            Debug.Log($"{piece.name} is targeted: {isTargeted}");
+            if (isTargeted) targetedPieces.Add(piece);
+        }
+        Debug.Log($"targeted pieces: {string.Join(", ", targetedPieces)}");
+        // Debug.Log($"targeted pieces: {string.Join(", ", Board.Instance.GetAllPieces().ToList().Where(p => p.CheckIfTargeted(false)))}");
+        var breakThing = targets[8];
+        var damageDone = GetDamageDone();
+        Debug.Log(
+            $"using {currentPiece.name} to attack {currentTarget.name} does {damageDone.Item1} damage to player and {damageDone.Item2} damage to opponent");
+        var netDamage = damageDone.Item1 - damageDone.Item2;
+        Destroy(patternOverlay);
+            // if (netDamage <= _bestNetDamage) continue;
+            // _bestNetDamage = netDamage;
+            // _bestPieces = (indexOfCurrentPiece, j);
+        // }
+    }
+
+    private (int, int) GetDamageDone()
+    {
+        var (playerDamage, opponentDamage) = (0, 0);
+        var allPieces = Board.Instance.GetAllPieces().ToList();
+        foreach (var piece in allPieces.Where(p => p.CheckIfTargeted(false)))
+        {
+            if (piece.IsPlayerPiece())
+            {
+                playerDamage += 1;
+            }
+            else
+            {
+                opponentDamage += 1;
+            }
+        }
+        
+        return (playerDamage, opponentDamage);
     }
     
     /// <summary>
@@ -139,7 +214,7 @@ public class Opponent : MonoBehaviour
         _selectedPiece = selectedPiece;
         _selectedPieceIndex = _pieces.IndexOf(_selectedPiece);
         _selectedPiece.SetHighlight(true, true);
-        _targetPieces = Board.Instance.GetPlayerPieces().Append(_selectedPiece).ToList();
+        _targetPieces = Board.Instance.GetPlayerPieces().ToList().Append(_selectedPiece).ToList();
         _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
         _selectedTargetPiece.SetHighlight(true, false);
 
@@ -150,7 +225,7 @@ public class Opponent : MonoBehaviour
         patternRenderer.SetControllingPiece(_selectedPiece);
         patternRenderer.DrawPattern(true);
         
-        StartCoroutine(SelectTarget(Random.Range(0, _targetPieces.Count)));
+        StartCoroutine(SelectTarget(_bestPieces.Item2));
         // StartCoroutine(SelectTarget(_targetPieces.Count - 2)); // for deterministic selection
     }
 
@@ -171,7 +246,7 @@ public class Opponent : MonoBehaviour
         var allPieces = Board.Instance.GetAllPieces().ToList();
         foreach (var piece in allPieces)
         {
-            piece.CheckIfTargeted();
+            piece.CheckIfTargeted(true);
             piece.Explode();
         }
         GameEvent.ShakeCamera();

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8184403822676650843}
   - component: {fileID: 4050089486979057953}
   - component: {fileID: 7484024923293955100}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ExplosionHighlight
   m_TagString: Projectile
   m_Icon: {fileID: 0}

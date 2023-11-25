@@ -248,7 +248,7 @@ public class Player : MonoBehaviour
         _selectedPlayerPiece = selectedPiece;
         _selectedPlayerPieceIndex = _pieces.IndexOf(selectedPiece);
         _selectedPlayerPiece.SetHighlight(true, true);
-        _targetPieces = Board.Instance.GetOpponentPieces().Append(_selectedPlayerPiece).ToList();
+        _targetPieces = Board.Instance.GetOpponentPieces().ToList().Append(_selectedPlayerPiece).ToList();
         _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
         _selectedTargetPiece.SetHighlight(true, false);
         GameEvent.PlayerTogglePiece(_selectedTargetPiece, InputState.SelectTarget);
@@ -278,7 +278,7 @@ public class Player : MonoBehaviour
         var allPieces = Board.Instance.GetAllPieces().ToList();
         foreach (var piece in allPieces)
         {
-            piece.CheckIfTargeted();
+            piece.CheckIfTargeted(true);
             piece.Explode();
         }
         GameEvent.ShakeCamera();
