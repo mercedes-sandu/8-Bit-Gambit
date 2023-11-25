@@ -252,8 +252,8 @@ public class Player : MonoBehaviour
         // Setup the pattern
         PatternOverlay =  Instantiate(PatternOverlayPrefab, _selectedTargetPiece.transform, false);
         var patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
-        patternRenderer.ControllingPiece = _selectedPlayerPiece;
-        patternRenderer.DrawPattern();
+        patternRenderer.SetControllingPiece(_selectedPlayerPiece);
+        patternRenderer.DrawPattern(true);
     }
 
     /// <summary>

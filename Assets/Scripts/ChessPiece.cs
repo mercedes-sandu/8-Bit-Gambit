@@ -25,7 +25,7 @@ public class ChessPiece : MonoBehaviour
     private int _currentDurability;
 
     private bool IsTargeted { get; set; } = false;
-    private Color initColor;
+    private Color _initColor;
 
     public ExplosionSequence[] ExplosionPattern;
 
@@ -39,28 +39,31 @@ public class ChessPiece : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         if (sr != null )
         {
-            initColor = sr.color;
+            _initColor = sr.color;
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (sr != null && collision.CompareTag("Projectile") )
-        {
-            float iLVal = Mathf.Cos(Time.time * 8);
-            float tVal = Mathf.InverseLerp(-1, 1, iLVal); // 0-1
-            float gbChannelVal = Mathf.Lerp(0, 1, tVal);
-            Color newColor = new Color(1, gbChannelVal, gbChannelVal, 1);
-            sr.color = newColor;
-        }
+        if (sr == null || !collision.CompareTag("Projectile")) return;
+        var iLVal = Mathf.Cos(Time.time * 8);
+        var tVal = Mathf.InverseLerp(-1, 1, iLVal); // 0-1
+        var gbChannelVal = Mathf.Lerp(0, 1, tVal);
+        var newColor = new Color(1, gbChannelVal, gbChannelVal, 1);
+        sr.color = newColor;
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (initColor != null)
-        {
-            sr.color = initColor;
-        }
+        sr.color = _initColor;
     }
 
     /// <summary>

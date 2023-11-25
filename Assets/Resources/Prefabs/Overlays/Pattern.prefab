@@ -44,6 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27de8e3ef9c20ca44a000ef58d7505f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PatternHighlightPrefab: {fileID: 3727600153997388414, guid: fc7d57c01b67cba4d8213e2a597a8846, type: 3}
-  ControllingPiece: {fileID: 0}
-  myGrid: {fileID: 0}
+  patternHighlightPrefab: {fileID: 3727600153997388414, guid: fc7d57c01b67cba4d8213e2a597a8846, type: 3}

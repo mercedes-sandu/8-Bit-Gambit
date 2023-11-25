@@ -60,6 +60,19 @@ public class Opponent : MonoBehaviour
         _pieces.Clear();
         _pieces = Board.Instance.GetOpponentPieces().ToList();
     }
+
+    private IEnumerator LoopThroughAllPieces()
+    {
+        yield return new WaitForSeconds(delayBetweenTaps);
+        
+        _selectedPiece.SetHighlight(false, true);
+        _selectedPieceIndex++;
+        _selectedPiece = _pieces[_selectedPieceIndex];
+        _selectedPiece.SetHighlight(true, true);
+
+        var bestPieceIndex = 0;// todo: implement
+        yield return SelectPiece(bestPieceIndex);
+    }
     
     /// <summary>
     /// 
@@ -134,8 +147,8 @@ public class Opponent : MonoBehaviour
         PatternOverlay = Instantiate(PatternOverlayPrefab, _selectedTargetPiece.transform, false);
         PatternOverlay.transform.Rotate(new Vector3(0, 0, 180));
         PatternRenderer patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
-        patternRenderer.ControllingPiece = _selectedPiece;
-        patternRenderer.DrawPattern();
+        patternRenderer.SetControllingPiece(_selectedPiece);
+        patternRenderer.DrawPattern(true);
         
         StartCoroutine(SelectTarget(Random.Range(0, _targetPieces.Count)));
         // StartCoroutine(SelectTarget(_targetPieces.Count - 2)); // for deterministic selection

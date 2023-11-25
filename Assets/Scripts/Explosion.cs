@@ -2,14 +2,16 @@ using UnityEngine;
 
 public class Explosion : MonoBehaviour
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public void AnimationComplete()
     {
-        if (gameObject.activeSelf)
+        if (!gameObject.activeSelf) return;
+        
+        if (transform.parent != null)
         {
-            if (transform.parent != null)
-            {
-                Destroy(transform.parent.gameObject);
-            }
+            Destroy(transform.parent.gameObject);
         }
     }
 }

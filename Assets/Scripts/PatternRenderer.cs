@@ -1,15 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class PatternRenderer : MonoBehaviour
 {
-    public GameObject PatternHighlightPrefab;
-    public ChessPiece ControllingPiece;
-    public Grid myGrid;
-    private List<GameObject> Highlights = new(); // Might be simpler as a list of vec3
-    private GameObject HighlightRoot;
+    [SerializeField] private GameObject patternHighlightPrefab;
+
+    private ChessPiece _controllingPiece;
+    private List<GameObject> _highlights = new(); // Might be simpler as a list of vec3
+    private GameObject _highlightRoot;
 
     // - Add the initial prefab highlighting the root tile
     // - For each Sequence
@@ -26,10 +25,19 @@ public class PatternRenderer : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
+    /// <param name="piece"></param>
+    public void SetControllingPiece(ChessPiece piece)
+    {
+        _controllingPiece = piece;
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
     public void TriggerAnimations()
     {
         transform.SetParent(null);
-        foreach (var animator in from highlight in Highlights
+        foreach (var animator in from highlight in _highlights
                  select GetComponentsInChildren<Animator>()
                  into animators
                  from animator in animators
@@ -39,28 +47,31 @@ public class PatternRenderer : MonoBehaviour
             animator.Play("ExplosionAnim");
         }
     }
+    
     /// <summary>
     /// 
     /// </summary>
-    public void DrawPattern()
+    /// <param name="enableSpriteRenderer"></param>
+    public void DrawPattern(bool enableSpriteRenderer)
     {
         // The ROOT highlight must only be instantiated once
         // ALL SEQUENCES start from the ROOT highlight
         // AFTER finding the transform following ROOT, all SEQUENCES build from last transform
         // Add new highlight to the list
-        foreach (var pattern in ControllingPiece.ExplosionPattern)
+        foreach (var pattern in _controllingPiece.ExplosionPattern)
         {
-            if (!HighlightRoot)
+            if (!_highlightRoot)
             {
                 // transform will always equal the parented object's transform
                 // Attach the ROOT highlight to this transform
                 // ONLY DO ONCE
-                HighlightRoot = Instantiate(PatternHighlightPrefab, transform, false);
+                _highlightRoot = Instantiate(patternHighlightPrefab, transform, false);
+                _highlightRoot.GetComponent<SpriteRenderer>().enabled = enableSpriteRenderer;
             }
             for (var i = 0; i < pattern.Sequence.Length; i++)
             {
                 // Set the new transform to start from EITHER ROOT or LAST ADDED GAMEOBJECT
-                var transformStart = i == 0 ? HighlightRoot.transform : Highlights.Last<GameObject>().transform;
+                var transformStart = i == 0 ? _highlightRoot.transform : _highlights.Last().transform;
 
                 // Determine if this highlight is to be skipped
                 const int numEdges = Board.NumEdgesInTile;
@@ -97,7 +108,8 @@ public class PatternRenderer : MonoBehaviour
                 var newTransform = new Vector3(newX, newY, transform.position.z);
                 
                 // Create the new Highlight to be saved; parent to this GameObject
-                var newHighlight = Instantiate(PatternHighlightPrefab, transform, false);
+                var newHighlight = Instantiate(patternHighlightPrefab, transform, false);
+                newHighlight.GetComponent<SpriteRenderer>().enabled = enableSpriteRenderer;
                 
                 // Adjust it's transform by our calculations
                 newHighlight.transform.SetLocalPositionAndRotation(newTransform, transform.rotation);
@@ -107,7 +119,7 @@ public class PatternRenderer : MonoBehaviour
                 }
                 
                 // Add to the list
-                Highlights.Add(newHighlight);
+                _highlights.Add(newHighlight);
             }
         }
     }
