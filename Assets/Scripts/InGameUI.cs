@@ -396,7 +396,8 @@ public class InGameUI : MonoBehaviour
     /// 
     /// </summary>
     /// <param name="selectedPiece"></param>
-    private void UpdateDetailsPanel(ChessPiece selectedPiece)
+    /// <param name="inputState"></param>
+    private void UpdateDetailsPanel(ChessPiece selectedPiece, LevelManager.InputState inputState)
     {
         var pieceName = FormatPieceName(selectedPiece.name);
         pieceNameText.text = pieceName.ToUpper();
@@ -416,8 +417,24 @@ public class InGameUI : MonoBehaviour
                 durabilityCircleImages[i].gameObject.SetActive(false);
             }
         }
+
+        switch (inputState)
+        {
+            case LevelManager.InputState.SelectPiece:
+                attackPatternImage.gameObject.SetActive(true);
+                attackPatternImage.sprite = _pieceNameToAttackPatternSprite[pieceName];
+                break;
+            case LevelManager.InputState.SelectTarget:
+                attackPatternImage.gameObject.SetActive(false);
+                break;
+            case LevelManager.InputState.Attack:
+                break;
+            case LevelManager.InputState.CanvasEnabled:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(inputState), inputState, null);
+        }
         
-        attackPatternImage.sprite = _pieceNameToAttackPatternSprite[pieceName];
     }
 
     /// <summary>

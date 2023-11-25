@@ -4,7 +4,9 @@ public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance = null;
 
-    [SerializeField] private InGameUI inGameUI;
+    private InGameUI _inGameUI;
+    private Player _player;
+    private Opponent _opponent;
     
     private InputState _inputState = InputState.SelectPiece;
     
@@ -45,6 +47,10 @@ public class LevelManager : MonoBehaviour
         
         _greenProgressBarSprites = Resources.LoadAll<Sprite>("Sprites/Piece Progress Bars/Green Progress Bar");
         _redProgressBarSprites = Resources.LoadAll<Sprite>("Sprites/Piece Progress Bars/Red Progress Bar");
+
+        _inGameUI = FindObjectOfType<InGameUI>().GetComponent<InGameUI>();
+        _player = FindObjectOfType<Player>().GetComponent<Player>();
+        _opponent = FindObjectOfType<Opponent>().GetComponent<Opponent>();
         
         GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
         GameEvent.OnAttackTarget += Attack;
@@ -76,9 +82,19 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void CompleteTurn()
     {
+        if (CheckForLevelOver()) return;
+        
         _isPlayerTurn = !_isPlayerTurn;
         _inputState = InputState.SelectPiece;
-        inGameUI.FadeDetailsPanel(_isPlayerTurn);
+        _inGameUI.FadeDetailsPanel(_isPlayerTurn);
+        if (_isPlayerTurn)
+        {
+            _player.PlayerTurn();
+        }
+        else
+        {
+            _opponent.OpponentTurn();
+        }
     }
     
     /// <summary>
@@ -112,7 +128,7 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Checks if the level is over and calls the appropriate event.
     /// </summary>
-    public void CheckForLevelOver()
+    private bool CheckForLevelOver()
     {
         var numPlayerPieces = Board.Instance.GetPlayerPieces().Count;
         var numOpponentPieces = Board.Instance.GetOpponentPieces().Count;
@@ -121,18 +137,16 @@ public class LevelManager : MonoBehaviour
         {
             case 0 when numOpponentPieces == 0:
                 GameEvent.LevelOver(EndState.Draw);
-                break;
+                return true;
             case 0:
                 GameEvent.LevelOver(EndState.PlayerLost);
-                break;
+                return true;
             default:
             {
-                if (numOpponentPieces == 0)
-                {
-                    GameEvent.LevelOver(EndState.PlayerWon);
-                }
+                if (numOpponentPieces != 0) return false;
+                GameEvent.LevelOver(EndState.PlayerWon);
+                return true;
 
-                break;
             }
         }
     }
@@ -142,7 +156,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void LevelWon()
     {
-        inGameUI.LevelWon();
+        _inGameUI.LevelWon();
     }
     
     /// <summary>
@@ -150,7 +164,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void LevelLost()
     {
-        inGameUI.LevelLost();
+        _inGameUI.LevelLost();
     }
     
     /// <summary>
@@ -158,7 +172,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public void LevelDraw()
     {
-        inGameUI.LevelDraw();
+        _inGameUI.LevelDraw();
     }
 
     /// <summary>
@@ -169,7 +183,7 @@ public class LevelManager : MonoBehaviour
     /// </param>
     public void UpdateCapturedPieces(ChessPiece piece, bool playerCaptured)
     {
-        inGameUI.AddCapturedPiece(piece, playerCaptured);
+        _inGameUI.AddCapturedPiece(piece, playerCaptured);
     }
     
     /// <summary>

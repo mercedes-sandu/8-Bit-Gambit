@@ -28,7 +28,12 @@
     /// <summary>
     /// Handles the event in which the player is toggling between their pieces during their turn.
     /// </summary>
-    public delegate void PlayerTogglePieceHandler(ChessPiece selectedPiece);
+    public delegate void PlayerTogglePieceHandler(ChessPiece selectedPiece, LevelManager.InputState inputState);
+
+    /// <summary>
+    /// Handles the event in which a piece has died.
+    /// </summary>
+    public delegate void PieceDieHandler(ChessPiece piece, bool isPlayer);
     
     /// <summary>
     /// The event listener for when a player has completed the progress bar animation when selecting their own piece.
@@ -60,6 +65,11 @@
     /// The event listener for when the player toggles between their pieces.
     /// </summary>
     public static event PlayerTogglePieceHandler OnPlayerTogglePiece;
+    
+    /// <summary>
+    /// The event listener for when a piece has died.
+    /// </summary>
+    public static event PieceDieHandler OnPieceDie;
 
     /// <summary>
     /// The event invoker for when a player has completed the progress bar animation when selecting their own piece.
@@ -92,10 +102,19 @@
     /// </summary>
     /// <param name="endState">Whether the player won, lost, or there was a draw.</param>
     public static void LevelOver(LevelManager.EndState endState) => OnLevelOver?.Invoke(endState);
-    
+
     /// <summary>
     /// The event invoker for when the player toggles between their pieces.
     /// </summary>
     /// <param name="selectedPiece">The current selected piece.</param>
-    public static void PlayerTogglePiece(ChessPiece selectedPiece) => OnPlayerTogglePiece?.Invoke(selectedPiece);
+    /// <param name="inputState">The current input state, either SelectPiece or SelectTarget.</param>
+    public static void PlayerTogglePiece(ChessPiece selectedPiece, LevelManager.InputState inputState) =>
+        OnPlayerTogglePiece?.Invoke(selectedPiece, inputState);
+    
+    /// <summary>
+    /// The event invoker for when a piece has died.
+    /// </summary>
+    /// <param name="piece">The piece that has died.</param>
+    /// <param name="isPlayer">True if a player piece has died, false if an opponent piece has died.</param>
+    public static void PieceDie(ChessPiece piece, bool isPlayer) => OnPieceDie?.Invoke(piece, isPlayer);
 }

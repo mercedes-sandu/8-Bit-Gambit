@@ -156,22 +156,22 @@ public class ChessPiece : MonoBehaviour
     /// </summary>
     private void TakeDamage()
     {
-        durability--;
-        if (durability <= 0)
+        _currentDurability--;
+        
+        if (_currentDurability <= 0)
         {
             if (isPlayerPiece)
             {
-                Board.Instance.RemoveOpponentPiece(this);
+                Board.Instance.RemovePlayerPiece(this);
             }
             else
             {
-                Board.Instance.RemovePlayerPiece(this);
+                Board.Instance.RemoveOpponentPiece(this);
             }
-            
-            LevelManager.Instance.CheckForLevelOver();
             
             Destroy(gameObject);
         }
+        
         IsTargeted = false;
     }
     

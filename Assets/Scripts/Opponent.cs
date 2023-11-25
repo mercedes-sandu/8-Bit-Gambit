@@ -24,27 +24,41 @@ public class Opponent : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        _pieces = Board.Instance.GetOpponentPieces();
+        _pieces = Board.Instance.GetOpponentPieces().ToList();
         _selectedPiece = _pieces[_selectedPieceIndex];
 
         GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
         GameEvent.OnAttackTarget += Attack;
-        GameEvent.OnTurnComplete += OpponentTurn;
+        GameEvent.OnPieceDie += RefreshPieces;
     }
 
     /// <summary>
     /// 
     /// </summary>
-    private void OpponentTurn()
+    public void OpponentTurn()
     {
         if (LevelManager.Instance.GetIsPlayerTurn() ||
             LevelManager.Instance.GetInputState() == LevelManager.InputState.CanvasEnabled) return;
-
+        
         _selectedPieceIndex = 0;
         _selectedTargetPieceIndex = 0;
+        _selectedPiece = _pieces[_selectedPieceIndex];
         _selectedPiece.SetHighlight(true, true);
-        StartCoroutine(SelectPiece(Random.Range(0, _pieces.Count)));
+        StartCoroutine(SelectPiece(Random.Range(0, _pieces.Count - 1)));
         // StartCoroutine(SelectPiece(_pieces.Count - 1)); // for deterministic selection
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="piece"></param>
+    /// <param name="isPlayer"></param>
+    private void RefreshPieces(ChessPiece piece, bool isPlayer)
+    {
+        if (isPlayer) return;
+        
+        _pieces.Clear();
+        _pieces = Board.Instance.GetOpponentPieces().ToList();
     }
     
     /// <summary>
@@ -139,14 +153,14 @@ public class Opponent : MonoBehaviour
         _selectedPiece.SetHighlight(false, true);
         _selectedTargetPiece.SetHighlight(false, false);
         
-        var allPieces = Board.Instance.GetAllPieces();
+        var allPieces = Board.Instance.GetAllPieces().ToList();
         foreach (var piece in allPieces)
         {
             piece.CheckIfTargeted();
             piece.Explode();
         }
         PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
-        Debug.Log($"Opponent attacking {pieceToAttack.name} at {pieceToAttack.transform.position}");// todo: remove
+        Debug.Log($"Opponent attacking {pieceToAttack.name} at {pieceToAttack.transform.position}"); // todo: remove
         GameEvent.CompleteTurn();
     }
 
@@ -157,6 +171,6 @@ public class Opponent : MonoBehaviour
     {
         GameEvent.OnConfirmSelectedPiece -= ConfirmSelectedPiece;
         GameEvent.OnAttackTarget -= Attack;
-        GameEvent.OnTurnComplete -= OpponentTurn;
+        GameEvent.OnPieceDie -= RefreshPieces;
     }
 }

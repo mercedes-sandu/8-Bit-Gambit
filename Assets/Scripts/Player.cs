@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
         
         GameEvent.OnConfirmSelectedPiece += ConfirmSelectedPiece;
         GameEvent.OnAttackTarget += Attack;
-        GameEvent.OnTurnComplete += PlayerTurn;
+        GameEvent.OnPieceDie += RefreshPieces;
     }
     
     /// <summary>
@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        _pieces = Board.Instance.GetPlayerPieces().ToList();
         PlayerTurn();
     }
 
@@ -179,7 +180,7 @@ public class Player : MonoBehaviour
         _selectedPlayerPieceIndex = (_selectedPlayerPieceIndex + 1) % _pieces.Count;
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
         _selectedPlayerPiece.SetHighlight(true, true);
-        GameEvent.PlayerTogglePiece(_selectedPlayerPiece);
+        GameEvent.PlayerTogglePiece(_selectedPlayerPiece, InputState.SelectPiece);
     }
 
     /// <summary>
@@ -213,6 +214,8 @@ public class Player : MonoBehaviour
 
         // Reparent the pattern overlay
         if (PatternOverlay) PatternOverlay.transform.SetParent(_selectedTargetPiece.transform, false);
+        
+        GameEvent.PlayerTogglePiece(_selectedTargetPiece, InputState.SelectTarget);
     }
 
     /// <summary>
@@ -244,9 +247,11 @@ public class Player : MonoBehaviour
         _targetPieces = Board.Instance.GetOpponentPieces().Append(_selectedPlayerPiece).ToList();
         _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
         _selectedTargetPiece.SetHighlight(true, false);
+        GameEvent.PlayerTogglePiece(_selectedTargetPiece, InputState.SelectTarget);
+        
         // Setup the pattern
         PatternOverlay =  Instantiate(PatternOverlayPrefab, _selectedTargetPiece.transform, false);
-        PatternRenderer patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
+        var patternRenderer = PatternOverlay.GetComponent<PatternRenderer>();
         patternRenderer.ControllingPiece = _selectedPlayerPiece;
         patternRenderer.DrawPattern();
     }
@@ -264,7 +269,7 @@ public class Player : MonoBehaviour
         _selectedPlayerPiece.SetHighlight(false, true);
         _selectedTargetPiece.SetHighlight(false, false);
         
-        var allPieces = Board.Instance.GetAllPieces();
+        var allPieces = Board.Instance.GetAllPieces().ToList();
         foreach (var piece in allPieces)
         {
             piece.CheckIfTargeted();
@@ -298,14 +303,28 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
-    private void PlayerTurn()
+    public void PlayerTurn()
     {
         if (!LevelManager.Instance.GetIsPlayerTurn()) return;
         
-        _pieces = Board.Instance.GetPlayerPieces();
+        _selectedPlayerPieceIndex = 0;
+        _selectedTargetPieceIndex = 0;
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
         _selectedPlayerPiece.SetHighlight(true, true);
-        GameEvent.PlayerTogglePiece(_selectedPlayerPiece);
+        GameEvent.PlayerTogglePiece(_selectedPlayerPiece, InputState.SelectPiece);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="piece"></param>
+    /// <param name="isPlayer"></param>
+    private void RefreshPieces(ChessPiece piece, bool isPlayer)
+    {
+        if (!isPlayer) return;
+        
+        _pieces.Clear();
+        _pieces = Board.Instance.GetPlayerPieces().ToList();
     }
     
     /// <summary>
@@ -315,6 +334,6 @@ public class Player : MonoBehaviour
     {
         GameEvent.OnConfirmSelectedPiece -= ConfirmSelectedPiece;
         GameEvent.OnAttackTarget -= Attack;
-        GameEvent.OnTurnComplete -= PlayerTurn;
+        GameEvent.OnPieceDie -= RefreshPieces;
     }
 }

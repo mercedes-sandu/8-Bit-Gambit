@@ -68,9 +68,11 @@ public class Board : MonoBehaviour
     public void RemovePlayerPiece(ChessPiece piece)
     {
         _playerPieces.Remove(piece);
+        _allPieces.Remove(piece);
         CapturePiece(piece, true);
+        GameEvent.PieceDie(piece, true);
     }
-    
+
     /// <summary>
     /// Returns the list of opponent pieces on the board.
     /// </summary>
@@ -84,7 +86,9 @@ public class Board : MonoBehaviour
     public void RemoveOpponentPiece(ChessPiece piece)
     {
         _opponentPieces.Remove(piece);
+        _allPieces.Remove(piece);
         CapturePiece(piece, false);
+        GameEvent.PieceDie(piece, false);
     }
 
     /// <summary>
@@ -112,10 +116,5 @@ public class Board : MonoBehaviour
     /// Gets all of the pieces on the board.
     /// </summary>
     /// <returns>The list of all chess pieces on the board.</returns>
-    public List<ChessPiece> GetAllPieces()
-    {
-        _allPieces.Clear();
-        FindChessPieces();
-        return _allPieces;
-    }
+    public List<ChessPiece> GetAllPieces() => _allPieces;
 }
