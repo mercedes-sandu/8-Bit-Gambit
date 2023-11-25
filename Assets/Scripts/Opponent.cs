@@ -160,7 +160,7 @@ public class Opponent : MonoBehaviour
             piece.Explode();
         }
         PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
-        Debug.Log($"Opponent attacking {pieceToAttack.name} at {pieceToAttack.transform.position}"); // todo: remove
+        GameEvent.ShakeCamera();
         GameEvent.CompleteTurn();
     }
 

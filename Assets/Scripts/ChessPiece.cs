@@ -174,7 +174,6 @@ public class ChessPiece : MonoBehaviour
         if (!IsTargeted) return;
         
         TakeDamage();
-        GameEvent.ShakeCamera();
     }
 
     /// <summary>

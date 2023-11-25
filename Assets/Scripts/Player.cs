@@ -276,7 +276,7 @@ public class Player : MonoBehaviour
             piece.Explode();
         }
         PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
-        Debug.Log($"Player attacking {pieceToAttack.name} at {pieceToAttack.transform.position}"); // todo: remove
+        GameEvent.ShakeCamera();
         GameEvent.CompleteTurn();
     }
 
