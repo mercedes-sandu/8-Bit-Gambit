@@ -3,6 +3,11 @@ using UnityEngine;
 
 public class CameraShake : MonoBehaviour
 {
+    [SerializeField] private float durationMinimum;
+    [SerializeField] private float durationMaximum;
+    [SerializeField] private float magnitudeMinimum;
+    [SerializeField] private float magnitudeMaximum;
+    
     private float _duration;
     private float _magnitude;
     
@@ -23,8 +28,8 @@ public class CameraShake : MonoBehaviour
     {
         if (_shakeStarted) return;
 
-        _duration = Random.Range(0.1f, 0.3f);
-        _magnitude = Random.Range(0.3f, 0.5f);
+        _duration = Random.Range(durationMinimum, durationMaximum);
+        _magnitude = Random.Range(magnitudeMinimum, magnitudeMaximum);
         _shakeStarted = true;
         StartCoroutine(Shake());
     }
