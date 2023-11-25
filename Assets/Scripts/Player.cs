@@ -306,7 +306,10 @@ public class Player : MonoBehaviour
     public void PlayerTurn()
     {
         if (!LevelManager.Instance.GetIsPlayerTurn()) return;
-        
+
+        _isKeyDown = false;
+        _keyHoldTimer = keyHoldThreshold;
+        _keyTapTimer = keyTapThreshold;
         _selectedPlayerPieceIndex = 0;
         _selectedTargetPieceIndex = 0;
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
