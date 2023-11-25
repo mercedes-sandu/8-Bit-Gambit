@@ -265,6 +265,8 @@ public class Player : MonoBehaviour
     {
         if (!isPlayer) return;
         
+        PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
+
         _coroutineStarted = false;
         _selectedPlayerPiece.SetHighlight(false, true);
         _selectedTargetPiece.SetHighlight(false, false);
@@ -275,7 +277,6 @@ public class Player : MonoBehaviour
             piece.CheckIfTargeted();
             piece.Explode();
         }
-        PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
         GameEvent.ShakeCamera();
         GameEvent.CompleteTurn();
     }

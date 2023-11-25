@@ -28,6 +28,7 @@ public class PatternRenderer : MonoBehaviour
     /// </summary>
     public void TriggerAnimations()
     {
+        transform.SetParent(null);
         foreach (var animator in from highlight in Highlights
                  select GetComponentsInChildren<Animator>()
                  into animators

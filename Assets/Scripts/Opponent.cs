@@ -153,13 +153,14 @@ public class Opponent : MonoBehaviour
         _selectedPiece.SetHighlight(false, true);
         _selectedTargetPiece.SetHighlight(false, false);
         
+        PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
+
         var allPieces = Board.Instance.GetAllPieces().ToList();
         foreach (var piece in allPieces)
         {
             piece.CheckIfTargeted();
             piece.Explode();
         }
-        PatternOverlay.GetComponent<PatternRenderer>().TriggerAnimations();
         GameEvent.ShakeCamera();
         GameEvent.CompleteTurn();
     }
