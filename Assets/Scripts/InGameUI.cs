@@ -17,6 +17,7 @@ public class InGameUI : MonoBehaviour
 
     [SerializeField] private float tileFadeTime = 0.1f;
     [SerializeField] private float canvasFadeTime = 0.2f;
+    [SerializeField] private float pauseBeforeGameOverTime = 1f;
     
     [SerializeField] private Canvas levelWonCanvas;
     [SerializeField] private Canvas levelLostCanvas;
@@ -40,6 +41,7 @@ public class InGameUI : MonoBehaviour
     private Dictionary<string, Sprite> _pieceNameToAttackPatternSprite = new ();
     
     private bool _isPlayerTurn = true;
+    private bool _waitedForGameOver = false;
 
     /// <summary>
     /// 
@@ -69,7 +71,7 @@ public class InGameUI : MonoBehaviour
         
         _backgroundTilemapRenderer = backgroundTilemap.GetComponent<TilemapRenderer>();
         
-        StartCoroutine(FadeAllTiles(false, _canvas));
+        StartCoroutine(FadeAllTiles(false, _canvas, true));
     }
 
     /// <summary>
@@ -104,13 +106,20 @@ public class InGameUI : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="fadeIn"></param>
+    /// <param name="fadeInTiles"></param>
     /// <param name="canvas"></param>
+    /// <param name="fadeInCanvas"></param>
     /// <returns></returns>
-    private IEnumerator FadeAllTiles(bool fadeIn, Canvas canvas)
+    private IEnumerator FadeAllTiles(bool fadeInTiles, Canvas canvas, bool fadeInCanvas)
     {
+        if (fadeInTiles && !_waitedForGameOver)
+        {
+            _waitedForGameOver = true;
+            yield return new WaitForSeconds(pauseBeforeGameOverTime);
+        }
+        
         _backgroundTilemapRenderer.enabled = true;
-        SetOpacityAllTiles(!fadeIn);
+        SetOpacityAllTiles(!fadeInTiles);
         
         var bounds = backgroundTilemap.cellBounds;
 
@@ -124,7 +133,7 @@ public class InGameUI : MonoBehaviour
             var tilesToFade = GetDiagonalTiles(tilePosition, true);
             foreach (var tileToFade in tilesToFade)
             {
-                StartCoroutine(FadeTile(tileToFade, fadeIn));
+                StartCoroutine(FadeTile(tileToFade, fadeInTiles));
             }
             yield return new WaitForSeconds(tileFadeTime);
         }
@@ -139,17 +148,19 @@ public class InGameUI : MonoBehaviour
             var tilesToFade = GetDiagonalTiles(tilePosition, false);
             foreach (var tileToFade in tilesToFade)
             {
-                StartCoroutine(FadeTile(tileToFade, fadeIn));
+                StartCoroutine(FadeTile(tileToFade, fadeInTiles));
             }
             yield return new WaitForSeconds(tileFadeTime);
         }
 
-        if (!fadeIn)
+        if (!fadeInTiles)
         {
             _backgroundTilemapRenderer.enabled = false;
             _canvas.enabled = true;
         }
-        StartCoroutine(FadeCanvas(!fadeIn, canvas, canvas.GetComponent<CanvasGroup>()));
+        
+        _waitedForGameOver = false;
+        StartCoroutine(FadeCanvas(fadeInCanvas, canvas, canvas.GetComponent<CanvasGroup>()));
     }
 
     /// <summary>
@@ -324,7 +335,7 @@ public class InGameUI : MonoBehaviour
         StartCoroutine(FadeCanvas(false, _canvas, _canvas.GetComponent<CanvasGroup>()));
         LevelManager.Instance.SetCanvasEnabled(true);
         levelWonCanvas.enabled = true;
-        StartCoroutine(FadeAllTiles(true, levelWonCanvas));
+        StartCoroutine(FadeAllTiles(true, levelWonCanvas, true));
     }
     
     /// <summary>
@@ -335,7 +346,7 @@ public class InGameUI : MonoBehaviour
         StartCoroutine(FadeCanvas(false, _canvas, _canvas.GetComponent<CanvasGroup>()));
         LevelManager.Instance.SetCanvasEnabled(true);
         levelLostCanvas.enabled = true;
-        StartCoroutine(FadeAllTiles(true, levelLostCanvas));
+        StartCoroutine(FadeAllTiles(true, levelLostCanvas, true));
     }
     
     /// <summary>
@@ -346,7 +357,7 @@ public class InGameUI : MonoBehaviour
         StartCoroutine(FadeCanvas(false, _canvas, _canvas.GetComponent<CanvasGroup>()));
         LevelManager.Instance.SetCanvasEnabled(true);
         levelDrawCanvas.enabled = true;
-        StartCoroutine(FadeAllTiles(true, levelDrawCanvas));
+        StartCoroutine(FadeAllTiles(true, levelDrawCanvas, true));
     }
 
     /// <summary>
