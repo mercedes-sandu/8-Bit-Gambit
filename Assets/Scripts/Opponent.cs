@@ -139,7 +139,7 @@ public class Opponent : MonoBehaviour
         _selectedPiece = selectedPiece;
         _selectedPieceIndex = _pieces.IndexOf(_selectedPiece);
         _selectedPiece.SetHighlight(true, true);
-        _targetPieces = Board.Instance.GetPlayerPieces().Append(_selectedPiece).ToList();
+        _targetPieces = Board.Instance.GetPlayerPieces().ToList().Append(_selectedPiece).ToList();
         _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
         _selectedTargetPiece.SetHighlight(true, false);
 

@@ -18,7 +18,8 @@ public class ChessPiece : MonoBehaviour
 
     private Sprite[] _greenProgressBarSprites;
     private Sprite[] _redProgressBarSprites;
-    private SpriteRenderer sr;
+    private SpriteRenderer _sr;
+    private BoxCollider2D _col;
     private float _timeToHold;
     private int _numSteps;
 
@@ -36,11 +37,8 @@ public class ChessPiece : MonoBehaviour
     {
         (_greenProgressBarSprites, _redProgressBarSprites) = LevelManager.Instance.GetProgressBarSprites();
         _currentDurability = durability;
-        sr = GetComponent<SpriteRenderer>();
-        if (sr != null )
-        {
-            _initColor = sr.color;
-        }
+        _sr = GetComponent<SpriteRenderer>();
+        if (_sr) _initColor = _sr.color;
     }
 
     /// <summary>
@@ -49,12 +47,13 @@ public class ChessPiece : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (sr == null || !collision.CompareTag("Projectile")) return;
+        if (!_sr || !collision.CompareTag("Projectile")) return;
+        
         var iLVal = Mathf.Cos(Time.time * 8);
         var tVal = Mathf.InverseLerp(-1, 1, iLVal); // 0-1
         var gbChannelVal = Mathf.Lerp(0, 1, tVal);
         var newColor = new Color(1, gbChannelVal, gbChannelVal, 1);
-        sr.color = newColor;
+        _sr.color = newColor;
     }
 
     /// <summary>
@@ -63,7 +62,7 @@ public class ChessPiece : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerExit2D(Collider2D collision)
     {
-        sr.color = _initColor;
+        if (_sr) _sr.color = _initColor;
     }
 
     /// <summary>
@@ -157,10 +156,9 @@ public class ChessPiece : MonoBehaviour
     /// </summary>
     public void CheckIfTargeted()
     {
-        var col = GetComponent<BoxCollider2D>();
         var filter = new ContactFilter2D().NoFilter();
         var results = new List<Collider2D>();
-        col.OverlapCollider(filter, results);
+        _col.OverlapCollider(filter, results);
         IsTargeted = false;
         foreach (var result in results.Where(result => result.CompareTag("Projectile")))
         {

@@ -3,6 +3,7 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance = null;
+    public KeyCode inputKey = KeyCode.Space;
 
     private InGameUI _inGameUI;
     private Player _player;

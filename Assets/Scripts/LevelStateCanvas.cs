@@ -7,8 +7,8 @@ public class LevelStateCanvas : MonoBehaviour
     [SerializeField] private float keyHoldThreshold = 2f;
 
     [SerializeField] private Image progressBarImage;
-    
-    [SerializeField] private KeyCode inputKey = KeyCode.Space;
+
+    private KeyCode _inputKey;
 
     private bool _canvasEnabled = false;
     
@@ -26,6 +26,8 @@ public class LevelStateCanvas : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        _inputKey = LevelManager.Instance.inputKey;
+        
         progressBarImage.enabled = false;
         
         _progressBarSprites = 
@@ -62,12 +64,12 @@ public class LevelStateCanvas : MonoBehaviour
             _isKeyDown = false;
         }
 
-        if (Input.GetKeyDown(inputKey))
+        if (Input.GetKeyDown(_inputKey))
         {
             _isKeyDown = true;
         }
 
-        if (!Input.GetKeyUp(inputKey)) return;
+        if (!Input.GetKeyUp(_inputKey)) return;
 
         if (_isKeyDown && _keyHoldTimer >= 0f) ReleaseInput();
         

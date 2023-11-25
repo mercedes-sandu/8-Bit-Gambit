@@ -6,13 +6,13 @@ using InputState = LevelManager.InputState;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private KeyCode inputKey = KeyCode.Space;
-    
     [SerializeField] private float keyTapThreshold = 0.5f;
     [SerializeField] private float keyHoldThreshold = 2f;
 
     [SerializeField] private GameObject patternOverlayPrefab;
     private GameObject _patternOverlay;
+
+    private KeyCode _inputKey;
     
     private List<ChessPiece> _pieces = new();
     private ChessPiece _selectedPlayerPiece;
@@ -48,6 +48,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         _pieces = Board.Instance.GetPlayerPieces().ToList();
+        _inputKey = LevelManager.Instance.inputKey;
         PlayerTurn();
     }
 
@@ -79,12 +80,12 @@ public class Player : MonoBehaviour
             _isKeyDown = false;
         }
         
-        if (Input.GetKeyDown(inputKey))
+        if (Input.GetKeyDown(_inputKey))
         {
             _isKeyDown = true;
         }
 
-        if (!Input.GetKeyUp(inputKey)) return;
+        if (!Input.GetKeyUp(_inputKey)) return;
         
         if (_isKeyDown)
         {
@@ -248,7 +249,7 @@ public class Player : MonoBehaviour
         _selectedPlayerPiece = selectedPiece;
         _selectedPlayerPieceIndex = _pieces.IndexOf(selectedPiece);
         _selectedPlayerPiece.SetHighlight(true, true);
-        _targetPieces = Board.Instance.GetOpponentPieces().Append(_selectedPlayerPiece).ToList();
+        _targetPieces = Board.Instance.GetOpponentPieces().ToList().Append(_selectedPlayerPiece).ToList();
         _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
         _selectedTargetPiece.SetHighlight(true, false);
         GameEvent.PlayerTogglePiece(_selectedTargetPiece, InputState.SelectTarget);
