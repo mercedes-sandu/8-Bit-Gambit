@@ -15,8 +15,6 @@ public class LevelManager : MonoBehaviour
 
     private Sprite[] _greenProgressBarSprites;
     private Sprite[] _redProgressBarSprites;
-
-    private ChessPiece _currentSelectedPiece;
     
     /// <summary>
     /// The different input states the player and opponent can be in.
@@ -59,12 +57,6 @@ public class LevelManager : MonoBehaviour
         GameEvent.OnAttackTarget += Attack;
         GameEvent.OnTurnComplete += CompleteTurn;
     }
-    
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    public ChessPiece GetCurrentSelectedPiece() => _currentSelectedPiece;
 
     /// <summary>
     /// When an attacking piece has been selected, change the input state to selecting a target piece.
@@ -73,7 +65,6 @@ public class LevelManager : MonoBehaviour
     /// <param name="isPlayer">True if it is the player's turn, false otherwise.</param>
     private void ConfirmSelectedPiece(ChessPiece selectedPiece, bool isPlayer)
     {
-        _currentSelectedPiece = selectedPiece;
         _inputState = InputState.SelectTarget;
     }
 

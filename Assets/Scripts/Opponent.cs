@@ -75,6 +75,7 @@ public class Opponent : MonoBehaviour
 
         if (_selectedPieceIndex == indexToSelect)
         {
+            _selectedPiece.StopCoroutine(_flashGreenCoroutine);
             _selectedPiece.StartProgressBar(confirmPieceTime, true);
             yield return null;
         }

@@ -7,7 +7,11 @@ public class LevelStateCanvas : MonoBehaviour
 {
     [SerializeField] private float keyTapThreshold = 0.5f;
     [SerializeField] private float keyHoldThreshold = 2f;
+    
+    [SerializeField] private Sprite buttonHighlighted;
+    [SerializeField] private Sprite buttonPressed;
 
+    [SerializeField] private Image buttonImage;
     [SerializeField] private Image progressBarImage;
 
     private KeyCode _inputKey;
@@ -32,6 +36,8 @@ public class LevelStateCanvas : MonoBehaviour
         _inputKey = LevelManager.Instance ? LevelManager.Instance.inputKey : KeyCode.Space;
 
         _canvasEnabled = GetComponent<Canvas>().enabled;
+
+        buttonImage.sprite = buttonHighlighted;
         
         progressBarImage.enabled = false;
         
@@ -106,6 +112,7 @@ public class LevelStateCanvas : MonoBehaviour
         if (_coroutineStarted) return;
 
         _coroutineStarted = true;
+        buttonImage.sprite = buttonPressed;
         progressBarImage.sprite = _progressBarSprites[0];
         progressBarImage.enabled = true;
         SoundManager.Instance.StartHoldAudio(keyHoldThreshold, _numSteps);
@@ -121,6 +128,7 @@ public class LevelStateCanvas : MonoBehaviour
         
         SoundManager.Instance.StopHoldAudio();
         StopCoroutine(_currentCoroutine);
+        buttonImage.sprite = buttonHighlighted;
         progressBarImage.sprite = _progressBarSprites[0];
         progressBarImage.enabled = false;
         _coroutineStarted = false;
