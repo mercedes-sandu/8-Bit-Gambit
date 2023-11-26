@@ -44,7 +44,6 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        Debug.Log(startButton);
         startButton.sprite = buttonHighlighted;
         quitButton.sprite = buttonNormal;
 
@@ -118,6 +117,7 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     private void TapInput()
     {
+        SoundManager.Instance.PlaySelect();
         _selectedButton.Item1.sprite = buttonNormal;
         _selectedButtonIndex = (_selectedButtonIndex + 1) % _buttons.Count;
         _selectedButton = _buttons[_selectedButtonIndex];
@@ -135,6 +135,7 @@ public class StartMenu : MonoBehaviour
         _selectedButton.Item1.sprite = buttonPressed;
         _selectedButton.Item2.sprite = _progressBarSprites[0];
         _selectedButton.Item2.enabled = true;
+        SoundManager.Instance.StartHoldAudio(keyHoldThreshold, _numSteps);
         _currentCoroutine = StartCoroutine(ProgressBar(0));
     }
 
@@ -145,6 +146,7 @@ public class StartMenu : MonoBehaviour
     {
         if (!_coroutineStarted) return;
         
+        SoundManager.Instance.StopHoldAudio();
         StopCoroutine(_currentCoroutine);
         _selectedButton.Item1.sprite = buttonHighlighted;
         _selectedButton.Item2.sprite = _progressBarSprites[0];
@@ -171,6 +173,7 @@ public class StartMenu : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.StopHoldAudio();
             _selectedButton.Item2.sprite = _progressBarSprites[0];
             _selectedButton.Item2.enabled = false;
             
@@ -200,8 +203,7 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     private void StartButton()
     {
-        // todo: load instructions scene
-        SceneManager.LoadScene("TestInput");
+        SceneManager.LoadScene("Instructions");
     }
 
     /// <summary>

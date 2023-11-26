@@ -1,21 +1,24 @@
 using System.Collections;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LevelStateCanvas : MonoBehaviour
 {
+    [SerializeField] private float keyTapThreshold = 0.5f;
     [SerializeField] private float keyHoldThreshold = 2f;
 
     [SerializeField] private Image progressBarImage;
 
     private KeyCode _inputKey;
 
-    private bool _canvasEnabled = false;
+    private bool _canvasEnabled;
     
     private Sprite[] _progressBarSprites;
     private int _numSteps;
 
     private bool _isKeyDown = false;
+    private float _keyTapTimer;
     private float _keyHoldTimer;
 
     private Coroutine _currentCoroutine;
@@ -26,7 +29,9 @@ public class LevelStateCanvas : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        _inputKey = LevelManager.Instance.inputKey;
+        _inputKey = LevelManager.Instance ? LevelManager.Instance.inputKey : KeyCode.Space;
+
+        _canvasEnabled = GetComponent<Canvas>().enabled;
         
         progressBarImage.enabled = false;
         
@@ -44,37 +49,53 @@ public class LevelStateCanvas : MonoBehaviour
     {
         if (!_canvasEnabled) return;
         
-        if (_isKeyDown && _keyHoldTimer <= 0f)
+        if (_isKeyDown && _keyTapTimer <= 0f)
         {
             _keyHoldTimer -= Time.deltaTime;
         }
         
-        if (_isKeyDown && _keyHoldTimer > 0f)
+        if (_isKeyDown && _keyTapTimer > 0f)
         {
-            _keyHoldTimer -= Time.deltaTime;
+            _keyTapTimer -= Time.deltaTime;
         }
         
-        if (_keyHoldTimer <= 0f && !_coroutineStarted)
+        if (_keyHoldTimer < keyHoldThreshold && _keyHoldTimer > 0f)
         {
             HoldInput();
         }
-
+        
         if (_keyHoldTimer <= 0f)
         {
             _isKeyDown = false;
         }
-
+        
         if (Input.GetKeyDown(_inputKey))
         {
             _isKeyDown = true;
         }
-
-        if (!Input.GetKeyUp(_inputKey)) return;
-
-        if (_isKeyDown && _keyHoldTimer >= 0f) ReleaseInput();
         
+        if (!Input.GetKeyUp(_inputKey)) return;
+        
+        if (_isKeyDown)
+        {
+            if (_keyTapTimer > 0f)
+            {
+                TapInput();
+            }
+            if (_keyHoldTimer >= 0f)
+            {
+                ReleaseInput();
+            }
+        }
+            
+        _keyTapTimer = keyTapThreshold;
         _keyHoldTimer = keyHoldThreshold;
         _isKeyDown = false;
+    }
+
+    private void TapInput()
+    {
+        // do nothing
     }
 
     /// <summary>
@@ -87,6 +108,7 @@ public class LevelStateCanvas : MonoBehaviour
         _coroutineStarted = true;
         progressBarImage.sprite = _progressBarSprites[0];
         progressBarImage.enabled = true;
+        SoundManager.Instance.StartHoldAudio(keyHoldThreshold, _numSteps);
         _currentCoroutine = StartCoroutine(ProgressBar(0));
     }
 
@@ -97,6 +119,7 @@ public class LevelStateCanvas : MonoBehaviour
     {
         if (!_coroutineStarted) return;
         
+        SoundManager.Instance.StopHoldAudio();
         StopCoroutine(_currentCoroutine);
         progressBarImage.sprite = _progressBarSprites[0];
         progressBarImage.enabled = false;
@@ -121,6 +144,7 @@ public class LevelStateCanvas : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.StopHoldAudio();
             progressBarImage.sprite = _progressBarSprites[0];
             progressBarImage.enabled = false;
             _coroutineStarted = false;
