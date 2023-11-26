@@ -43,6 +43,7 @@ public class ChessPiece : MonoBehaviour
         _sr = GetComponent<SpriteRenderer>();
         _col = GetComponent<BoxCollider2D>();
         if (_sr) _initColor = _sr.color;
+        _currentDurability = durability;
     }
     
     /// <summary>
@@ -51,7 +52,6 @@ public class ChessPiece : MonoBehaviour
     private void Start()
     {
         (_greenProgressBarSprites, _redProgressBarSprites) = LevelManager.Instance.GetProgressBarSprites();
-        _currentDurability = durability;
     }
     
     /// <summary>
