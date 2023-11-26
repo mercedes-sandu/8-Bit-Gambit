@@ -75,7 +75,7 @@ public class Opponent : MonoBehaviour
 
         if (_selectedPieceIndex == indexToSelect)
         {
-            _selectedPiece.StopCoroutine(_flashGreenCoroutine);
+            _selectedPiece.StopFlashGreen(_flashGreenCoroutine);
             _selectedPiece.StartProgressBar(confirmPieceTime, true);
             yield return null;
         }
@@ -130,7 +130,7 @@ public class Opponent : MonoBehaviour
     {
         if (isPlayer) return;
         _selectedPiece.SetHighlight(false, true);
-        _selectedPiece.StopCoroutine(_flashGreenCoroutine);
+        _selectedPiece.StopFlashGreen(_flashGreenCoroutine);
         _selectedPiece = selectedPiece;
         _selectedPieceIndex = _pieces.IndexOf(_selectedPiece);
         _selectedPiece.SetHighlight(true, true);
