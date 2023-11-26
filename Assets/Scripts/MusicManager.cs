@@ -1,16 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MusicManager : MonoBehaviour
 {
-    public static MusicManager Instance;
-    public AudioSource _audioSource;
-    public AudioClip _menuTrack;
-    public AudioClip _levelCompleteTrack;
-    public AudioClip _gameOverTrack;
-    public AudioClip _victoryTrack;
-    public AudioClip _levelTrack;
+    public static MusicManager Instance = null;
+    
+    [SerializeField] private AudioClip menuTrack;
+    [SerializeField] private AudioClip levelCompleteTrack;
+    [SerializeField] private AudioClip gameOverTrack;
+    [SerializeField] private AudioClip victoryTrack;
+    [SerializeField] private AudioClip levelTrack;
+    
+    private AudioSource _audioSource;
 
     private void Awake()
     {
@@ -22,13 +22,15 @@ public class MusicManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
+        _audioSource = GetComponent<AudioSource>();
         PlayLevelMusic();
     }
 
     public void PlayMenuMusic()
     {
         _audioSource.loop = true;
-        _audioSource.clip = _menuTrack;
+        _audioSource.clip = menuTrack;
         _audioSource.volume = 0.25f;
         _audioSource.Play();
     }
@@ -36,14 +38,14 @@ public class MusicManager : MonoBehaviour
     public void PlayLevelCompleteMusic()
     {
         _audioSource.loop = false;
-        _audioSource.clip = _levelCompleteTrack;
+        _audioSource.clip = levelCompleteTrack;
         _audioSource.volume = 0.4f;
         _audioSource.PlayDelayed(1f);
     }
 
-    public void PlayLevelMusic()
+    private void PlayLevelMusic()
     {
-        _audioSource.clip = _levelTrack;
+        _audioSource.clip = levelTrack;
         _audioSource.loop = true;
         _audioSource.volume = 0.25f;
         _audioSource.Play();
@@ -52,7 +54,7 @@ public class MusicManager : MonoBehaviour
     public void PlayGameOverMusic()
     {
         _audioSource.loop = true;
-        _audioSource.clip = _gameOverTrack;
+        _audioSource.clip = gameOverTrack;
         _audioSource.volume = 0.25f;
         _audioSource.PlayDelayed(1f);
     }

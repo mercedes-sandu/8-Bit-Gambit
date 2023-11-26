@@ -45,12 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c9b8d5935e74ae46b312d62ae58a404, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioSource: {fileID: 2567826146111178374}
-  _menuTrack: {fileID: 8300000, guid: da3995ca82f3e314aafd9c27b71b2cf3, type: 3}
-  _levelCompleteTrack: {fileID: 8300000, guid: e98e356c2e37c8d4b8bfe4da40ec92ab, type: 3}
-  _gameOverTrack: {fileID: 8300000, guid: efff75fc36b379e44971479abdcd102b, type: 3}
-  _victoryTrack: {fileID: 8300000, guid: 8e5ebcbb9058cd34fae6cfe169a78105, type: 3}
-  _levelTrack: {fileID: 8300000, guid: fff8da03818c32147a9f2a530756be00, type: 3}
+  menuTrack: {fileID: 8300000, guid: da3995ca82f3e314aafd9c27b71b2cf3, type: 3}
+  levelCompleteTrack: {fileID: 8300000, guid: e98e356c2e37c8d4b8bfe4da40ec92ab, type: 3}
+  gameOverTrack: {fileID: 8300000, guid: efff75fc36b379e44971479abdcd102b, type: 3}
+  victoryTrack: {fileID: 8300000, guid: 8e5ebcbb9058cd34fae6cfe169a78105, type: 3}
+  levelTrack: {fileID: 8300000, guid: fff8da03818c32147a9f2a530756be00, type: 3}
 --- !u!82 &2567826146111178374
 AudioSource:
   m_ObjectHideFlags: 0

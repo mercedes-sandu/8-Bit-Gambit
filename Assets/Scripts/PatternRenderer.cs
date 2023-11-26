@@ -10,6 +10,12 @@ public class PatternRenderer : MonoBehaviour
     private List<GameObject> _highlights = new(); // Might be simpler as a list of vec3
     private GameObject _highlightRoot;
 
+    private static readonly List<string> ExplosionAnimations = new()
+    {
+        "ExplosionAnim", "ExplosionAnim1", "ExplosionAnim2", "ExplosionAnim3", "ExplosionAnim4", "ExplosionAnim5",
+        "ExplosionAnim6", "ExplosionAnim7", "ExplosionAnim8", "ExplosionAnim9", "ExplosionAnim10", "ExplosionAnim11"
+    };
+
     // - Add the initial prefab highlighting the root tile
     // - For each Sequence
     // -- For each entry in Sequence
@@ -44,7 +50,7 @@ public class PatternRenderer : MonoBehaviour
                  where animator
                  select animator)
         {
-            animator.Play("ExplosionAnim");
+            animator.Play(ExplosionAnimations[Random.Range(0, ExplosionAnimations.Count - 1)]);
         }
     }
     
