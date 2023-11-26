@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class InGameUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI turnText;
+    [SerializeField] private TextMeshProUGUI attackText;
     
     [SerializeField] private Transform playerCapturedPiecesContainer;
     [SerializeField] private Transform opponentCapturedPiecesContainer;
@@ -34,6 +35,7 @@ public class InGameUI : MonoBehaviour
     [SerializeField] private Sprite circleEmptySprite;
 
     private Canvas _canvas;
+    private Animator _animator;
     
     private TilemapRenderer _backgroundTilemapRenderer;
     
@@ -52,6 +54,7 @@ public class InGameUI : MonoBehaviour
         
         GameEvent.OnTurnComplete += UpdateTurnText;
         GameEvent.OnPlayerTogglePiece += UpdateDetailsPanel;
+        GameEvent.OnAttackTarget += AttackUI;
     }
     
     /// <summary>
@@ -68,6 +71,10 @@ public class InGameUI : MonoBehaviour
         levelLostCanvas.GetComponent<CanvasGroup>().alpha = 0;
         levelDrawCanvas.enabled = false;
         levelDrawCanvas.GetComponent<CanvasGroup>().alpha = 0;
+
+        attackText.enabled = false;
+
+        _animator = GetComponent<Animator>();
         
         _backgroundTilemapRenderer = backgroundTilemap.GetComponent<TilemapRenderer>();
         
@@ -445,7 +452,27 @@ public class InGameUI : MonoBehaviour
             default:
                 throw new ArgumentOutOfRangeException(nameof(inputState), inputState, null);
         }
-        
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="targetPiece"></param>
+    /// <param name="isPlayer"></param>
+    private void AttackUI(ChessPiece targetPiece, bool isPlayer)
+    {
+        attackText.enabled = true;
+        var pieceName = FormatPieceName(targetPiece.name);
+        attackText.text = $"{pieceName.ToUpper()} TO {Board.Instance.GetBoardTileName(targetPiece.transform.position)}";
+        _animator.Play("InGameUIAttack");
+    }
+    
+    /// <summary>
+    /// Called by the animator when the attack UI animation is done.
+    /// </summary>
+    public void DisableAttackText()
+    {
+        attackText.enabled = false;
     }
 
     /// <summary>
@@ -455,5 +482,6 @@ public class InGameUI : MonoBehaviour
     {
         GameEvent.OnTurnComplete -= UpdateTurnText;
         GameEvent.OnPlayerTogglePiece -= UpdateDetailsPanel;
+        GameEvent.OnAttackTarget -= AttackUI;
     }
 }

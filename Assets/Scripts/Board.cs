@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Board : MonoBehaviour
 {
     public static Board Instance = null;
     
     public const int NumEdgesInTile = 4;
+
+    private Tilemap _boardTilemap;
     
     private List<ChessPiece> _playerPieces = new ();
     private List<ChessPiece> _opponentPieces = new ();
@@ -15,6 +18,14 @@ public class Board : MonoBehaviour
     // todo: i'm not sure if i'll actually use these or not tbh
     private List<ChessPiece> _playerCapturedPieces = new();
     private List<ChessPiece> _opponentCapturedPieces = new();
+    
+    private Dictionary<Vector3Int, string> _boardTileNames = new();
+    
+    private static readonly List<string> BoardTileLetters = new()
+    {
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
+        "W", "X", "Y", "Z"
+    };
 
     /// <summary>
     /// Establishes the singleton and finds all chess pieces on the board.
@@ -29,7 +40,9 @@ public class Board : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        
+
+        _boardTilemap = transform.GetChild(0).GetComponent<Tilemap>();
+        SetBoardTileNames();
         FindChessPieces();
     }
 
@@ -117,4 +130,32 @@ public class Board : MonoBehaviour
     /// </summary>
     /// <returns>The list of all chess pieces on the board.</returns>
     public List<ChessPiece> GetAllPieces() => _allPieces;
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void SetBoardTileNames()
+    {
+        var bounds = _boardTilemap.cellBounds;
+        
+        for (var row = bounds.yMin; row < bounds.yMax; row++)
+        {
+            for (var column = bounds.xMin; column < bounds.yMax; column++)
+            {
+                var tilePosition = new Vector3Int(column, row, 0);
+
+                if (!_boardTilemap.GetTile(tilePosition)) continue;
+                
+                var tileName = BoardTileLetters[row - bounds.yMin] + (column + 1 - bounds.xMin);
+                _boardTileNames.Add(tilePosition, tileName);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tilePosition"></param>
+    /// <returns></returns>
+    public string GetBoardTileName(Vector3 tilePosition) => _boardTileNames[_boardTilemap.WorldToCell(tilePosition)];
 }
