@@ -1541,7 +1541,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 2164260863
   m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -1691,6 +1691,7 @@ GameObject:
   - component: {fileID: 805723368}
   - component: {fileID: 805723374}
   - component: {fileID: 805723375}
+  - component: {fileID: 805723376}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1898,6 +1899,27 @@ MonoBehaviour:
   buttonPressed: {fileID: 1287978260, guid: 5e8c8d12f65c4c946a482fac7f6d645b, type: 3}
   buttonImage: {fileID: 102894132}
   progressBarImage: {fileID: 280219339}
+--- !u!95 &805723376
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 805723367}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 00b311cea10108a428dc72e59f93a0e3, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &807640319
 MonoBehaviour:
   m_ObjectHideFlags: 0

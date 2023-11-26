@@ -138,7 +138,7 @@ public class Board : MonoBehaviour
     {
         var bounds = _boardTilemap.cellBounds;
         
-        for (var row = bounds.yMin; row < bounds.yMax; row++)
+        for (var row = bounds.yMax; row > bounds.yMin; row--)
         {
             for (var column = bounds.xMin; column < bounds.yMax; column++)
             {

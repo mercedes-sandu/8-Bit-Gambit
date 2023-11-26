@@ -38,6 +38,11 @@ public class InGameUI : MonoBehaviour
     private Canvas _canvas;
     private Animator _animator;
     private Image _attackTextContainerImage;
+
+    private FadingText _instructionsTextFadingText;
+    private WaveText _turnTextWaveText;
+    private Coroutine _fadingTextCoroutine;
+    private Coroutine _waveTextCoroutine;
     
     private TilemapRenderer _backgroundTilemapRenderer;
     
@@ -74,6 +79,11 @@ public class InGameUI : MonoBehaviour
         levelLostCanvas.GetComponent<CanvasGroup>().alpha = 0;
         levelDrawCanvas.enabled = false;
         levelDrawCanvas.GetComponent<CanvasGroup>().alpha = 0;
+        
+        _instructionsTextFadingText = instructionsText.GetComponent<FadingText>();
+        _turnTextWaveText = turnText.GetComponent<WaveText>();
+        
+        _fadingTextCoroutine = _instructionsTextFadingText.FadeTextRoutine();
 
         attackText.enabled = false;
         _attackTextContainerImage = attackText.transform.parent.GetComponent<Image>();
@@ -111,7 +121,16 @@ public class InGameUI : MonoBehaviour
     {
         _isPlayerTurn = !_isPlayerTurn;
         turnText.text = _isPlayerTurn ? "Player's Turn" : "Opponent's Turn";
-        if (_isPlayerTurn) instructionsText.text = "SELECT ATTACKER";
+        if (_isPlayerTurn)
+        {
+            _instructionsTextFadingText.StopCoroutine(_fadingTextCoroutine);
+            instructionsText.text = "SELECT ATTACKER";
+            _fadingTextCoroutine = _instructionsTextFadingText.FadeTextRoutine();
+        }
+        else
+        {
+            _instructionsTextFadingText.StopCoroutine(_fadingTextCoroutine);
+        }
         instructionsText.enabled = _isPlayerTurn;
     }
     
