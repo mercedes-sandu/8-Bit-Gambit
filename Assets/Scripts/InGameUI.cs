@@ -123,13 +123,13 @@ public class InGameUI : MonoBehaviour
         turnText.text = _isPlayerTurn ? "Player's Turn" : "Opponent's Turn";
         if (_isPlayerTurn)
         {
-            _instructionsTextFadingText.StopCoroutine(_fadingTextCoroutine);
+            _instructionsTextFadingText.StopFadeTextCoroutine(_fadingTextCoroutine);
             instructionsText.text = "SELECT ATTACKER";
             _fadingTextCoroutine = _instructionsTextFadingText.FadeTextRoutine();
         }
         else
         {
-            _instructionsTextFadingText.StopCoroutine(_fadingTextCoroutine);
+            _instructionsTextFadingText.StopFadeTextCoroutine(_fadingTextCoroutine);
         }
         instructionsText.enabled = _isPlayerTurn;
     }
