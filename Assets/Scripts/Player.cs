@@ -29,6 +29,8 @@ public class Player : MonoBehaviour
     private Coroutine _currentCoroutine;
     private bool _coroutineStarted = false;
 
+    private Coroutine _flashGreenCoroutine;
+
     /// <summary>
     /// Subscribes to game events.
     /// </summary>
@@ -183,9 +185,11 @@ public class Player : MonoBehaviour
     {
         SoundManager.Instance.PlaySelect();
         _selectedPlayerPiece.SetHighlight(false, true);
+        _selectedPlayerPiece.StopFlashGreen(_flashGreenCoroutine);
         _selectedPlayerPieceIndex = (_selectedPlayerPieceIndex + 1) % _pieces.Count;
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
         _selectedPlayerPiece.SetHighlight(true, true);
+        _flashGreenCoroutine = _selectedPlayerPiece.StartFlashGreen();
         GameEvent.PlayerTogglePiece(_selectedPlayerPiece, InputState.SelectPiece);
     }
 
@@ -248,6 +252,7 @@ public class Player : MonoBehaviour
         
         _coroutineStarted = false;
         _selectedPlayerPiece.SetHighlight(false, true);
+        _selectedPlayerPiece.StopFlashGreen(_flashGreenCoroutine);
         _selectedPlayerPiece = selectedPiece;
         _selectedPlayerPieceIndex = _pieces.IndexOf(selectedPiece);
         _selectedPlayerPiece.SetHighlight(true, true);
@@ -324,6 +329,7 @@ public class Player : MonoBehaviour
         _selectedTargetPieceIndex = 0;
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
         _selectedPlayerPiece.SetHighlight(true, true);
+        _flashGreenCoroutine = _selectedPlayerPiece.StartFlashGreen();
         GameEvent.PlayerTogglePiece(_selectedPlayerPiece, InputState.SelectPiece);
     }
 

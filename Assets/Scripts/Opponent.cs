@@ -19,6 +19,8 @@ public class Opponent : MonoBehaviour
     private ChessPiece _selectedTargetPiece;
     private int _selectedTargetPieceIndex = 0;
 
+    private Coroutine _flashGreenCoroutine;
+
     /// <summary>
     /// Sets the opponent's pieces, selected piece, and subscribes to game events.
     /// </summary>
@@ -44,6 +46,7 @@ public class Opponent : MonoBehaviour
         _selectedTargetPieceIndex = 0;
         _selectedPiece = _pieces[_selectedPieceIndex];
         _selectedPiece.SetHighlight(true, true);
+        _flashGreenCoroutine = _selectedPiece.StartFlashGreen();
         StartCoroutine(SelectPiece(Random.Range(0, _pieces.Count - 1)));
         // StartCoroutine(SelectPiece(_pieces.Count - 1)); // for deterministic selection
     }
@@ -59,19 +62,6 @@ public class Opponent : MonoBehaviour
         
         _pieces.Clear();
         _pieces = Board.Instance.GetOpponentPieces().ToList();
-    }
-
-    private IEnumerator LoopThroughAllPieces()
-    {
-        yield return new WaitForSeconds(delayBetweenTaps);
-        
-        _selectedPiece.SetHighlight(false, true);
-        _selectedPieceIndex++;
-        _selectedPiece = _pieces[_selectedPieceIndex];
-        _selectedPiece.SetHighlight(true, true);
-
-        var bestPieceIndex = 0;// todo: implement
-        yield return SelectPiece(bestPieceIndex);
     }
     
     /// <summary>
@@ -92,9 +82,11 @@ public class Opponent : MonoBehaviour
         {
             SoundManager.Instance.PlaySelect();
             _selectedPiece.SetHighlight(false, true);
+            _selectedPiece.StopCoroutine(_flashGreenCoroutine);
             _selectedPieceIndex++;
             _selectedPiece = _pieces[_selectedPieceIndex];
             _selectedPiece.SetHighlight(true, true);
+            _flashGreenCoroutine = _selectedPiece.StartFlashGreen();
             yield return SelectPiece(indexToSelect);
         }
     }
@@ -137,6 +129,7 @@ public class Opponent : MonoBehaviour
     {
         if (isPlayer) return;
         _selectedPiece.SetHighlight(false, true);
+        _selectedPiece.StopCoroutine(_flashGreenCoroutine);
         _selectedPiece = selectedPiece;
         _selectedPieceIndex = _pieces.IndexOf(_selectedPiece);
         _selectedPiece.SetHighlight(true, true);

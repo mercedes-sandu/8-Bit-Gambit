@@ -19,6 +19,8 @@ public class ChessPiece : MonoBehaviour
     [SerializeField] private GameObject damageParticles;
     [SerializeField] private GameObject deathParticles;
 
+    [SerializeField] private float colorChangeSpeed = 2f;
+
     private Sprite[] _greenProgressBarSprites;
     private Sprite[] _redProgressBarSprites;
     private SpriteRenderer _sr;
@@ -43,6 +45,36 @@ public class ChessPiece : MonoBehaviour
         _sr = GetComponent<SpriteRenderer>();
         _col = GetComponent<BoxCollider2D>();
         if (_sr) _initColor = _sr.color;
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    public Coroutine StartFlashGreen() => StartCoroutine(FlashGreen());
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="coroutine"></param>
+    public void StopFlashGreen(Coroutine coroutine)
+    {
+        if (_sr) _sr.color = _initColor;
+        StopCoroutine(coroutine);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator FlashGreen()
+    {
+        while (true)
+        {
+            var lerpTime = Mathf.PingPong(Time.time * colorChangeSpeed, 1f);
+            _sr.color = Color.Lerp(_initColor, Color.green, lerpTime);
+            yield return null;
+        }
     }
 
     /// <summary>

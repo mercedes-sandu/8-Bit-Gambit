@@ -192,6 +192,7 @@ MonoBehaviour:
   durability: 2
   damageParticles: {fileID: 5430890188735338710, guid: 106190ae3b9d07549be6900babd5621a, type: 3}
   deathParticles: {fileID: 5430890188735338710, guid: a4a05614b79344d45b9b9e2738b40f4d, type: 3}
+  colorChangeSpeed: 2
   ExplosionPattern:
   - {fileID: 11400000, guid: 687e026d1c3739f499054e428179e96f, type: 2}
   - {fileID: 11400000, guid: 4db3c3e5ff3420648bd1c36dc0ce0eb6, type: 2}
