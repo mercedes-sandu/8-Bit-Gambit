@@ -181,6 +181,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void SelectPiece()
     {
+        SoundManager.Instance.PlaySelect();
         _selectedPlayerPiece.SetHighlight(false, true);
         _selectedPlayerPieceIndex = (_selectedPlayerPieceIndex + 1) % _pieces.Count;
         _selectedPlayerPiece = _pieces[_selectedPlayerPieceIndex];
@@ -204,6 +205,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void SelectTarget()
     {
+        SoundManager.Instance.PlaySelect();
         if (_selectedTargetPiece == _selectedPlayerPiece)
         {
             _selectedTargetPiece.SetHighlight(true, true);
@@ -282,6 +284,7 @@ public class Player : MonoBehaviour
             piece.CheckIfTargeted();
             piece.Explode();
         }
+        SoundManager.Instance.PlayExplosion();
         GameEvent.ShakeCamera();
         GameEvent.CompleteTurn();
     }

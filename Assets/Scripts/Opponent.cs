@@ -90,6 +90,7 @@ public class Opponent : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.PlaySelect();
             _selectedPiece.SetHighlight(false, true);
             _selectedPieceIndex++;
             _selectedPiece = _pieces[_selectedPieceIndex];
@@ -114,6 +115,7 @@ public class Opponent : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.PlaySelect();
             _selectedTargetPiece.SetHighlight(false, false);
             _selectedTargetPieceIndex++;
             _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
@@ -174,6 +176,7 @@ public class Opponent : MonoBehaviour
             piece.CheckIfTargeted();
             piece.Explode();
         }
+        SoundManager.Instance.PlayExplosion();
         GameEvent.ShakeCamera();
         GameEvent.CompleteTurn();
     }

@@ -146,6 +146,7 @@ public class LevelManager : MonoBehaviour
             {
                 if (numOpponentPieces != 0) return false;
                 GameEvent.LevelOver(EndState.PlayerWon);
+                MusicManager.Instance.PlayLevelCompleteMusic();
                 return true;
 
             }
