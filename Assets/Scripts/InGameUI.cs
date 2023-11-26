@@ -10,6 +10,7 @@ public class InGameUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI turnText;
     [SerializeField] private TextMeshProUGUI attackText;
+    [SerializeField] private TextMeshProUGUI instructionsText;
     
     [SerializeField] private Transform playerCapturedPiecesContainer;
     [SerializeField] private Transform opponentCapturedPiecesContainer;
@@ -54,6 +55,7 @@ public class InGameUI : MonoBehaviour
         
         GameEvent.OnTurnComplete += UpdateTurnText;
         GameEvent.OnPlayerTogglePiece += UpdateDetailsPanel;
+        GameEvent.OnConfirmSelectedPiece += UpdateInstructionsText;
         GameEvent.OnAttackTarget += AttackUI;
     }
     
@@ -100,12 +102,14 @@ public class InGameUI : MonoBehaviour
     }
     
     /// <summary>
-    /// Updates the turn text to reflect whose turn it is.
+    /// Updates the turn text to reflect whose turn it is. Also updates the instructions text.
     /// </summary>
     private void UpdateTurnText()
     {
         _isPlayerTurn = !_isPlayerTurn;
         turnText.text = _isPlayerTurn ? "Player's Turn" : "Opponent's Turn";
+        if (_isPlayerTurn) instructionsText.text = "SELECT ATTACKER";
+        instructionsText.enabled = _isPlayerTurn;
     }
     
     #region Fading Coroutines
@@ -468,6 +472,16 @@ public class InGameUI : MonoBehaviour
     }
     
     /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="selectedPiece"></param>
+    /// <param name="isPlayer"></param>
+    private void UpdateInstructionsText(ChessPiece selectedPiece, bool isPlayer)
+    {
+        instructionsText.text = "SELECT TARGET";
+    }
+    
+    /// <summary>
     /// Called by the animator when the attack UI animation is done.
     /// </summary>
     public void DisableAttackText()
@@ -482,6 +496,7 @@ public class InGameUI : MonoBehaviour
     {
         GameEvent.OnTurnComplete -= UpdateTurnText;
         GameEvent.OnPlayerTogglePiece -= UpdateDetailsPanel;
+        GameEvent.OnConfirmSelectedPiece -= UpdateInstructionsText;
         GameEvent.OnAttackTarget -= AttackUI;
     }
 }
