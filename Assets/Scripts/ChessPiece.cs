@@ -36,15 +36,22 @@ public class ChessPiece : MonoBehaviour
     public ExplosionSequence[] ExplosionPattern;
 
     /// <summary>
+    /// 
+    /// </summary>
+    private void Awake()
+    {
+        _sr = GetComponent<SpriteRenderer>();
+        _col = GetComponent<BoxCollider2D>();
+        if (_sr) _initColor = _sr.color;
+    }
+    
+    /// <summary>
     /// Initializes the progress bar sprites and current durability of the piece.
     /// </summary>
     private void Start()
     {
         (_greenProgressBarSprites, _redProgressBarSprites) = LevelManager.Instance.GetProgressBarSprites();
         _currentDurability = durability;
-        _sr = GetComponent<SpriteRenderer>();
-        _col = GetComponent<BoxCollider2D>();
-        if (_sr) _initColor = _sr.color;
     }
     
     /// <summary>
