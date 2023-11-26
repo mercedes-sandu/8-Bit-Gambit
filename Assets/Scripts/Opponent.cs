@@ -83,7 +83,7 @@ public class Opponent : MonoBehaviour
         {
             SoundManager.Instance.PlaySelect();
             _selectedPiece.SetHighlight(false, true);
-            _selectedPiece.StopCoroutine(_flashGreenCoroutine);
+            _selectedPiece.StopFlashGreen(_flashGreenCoroutine);
             _selectedPieceIndex++;
             _selectedPiece = _pieces[_selectedPieceIndex];
             _selectedPiece.SetHighlight(true, true);
