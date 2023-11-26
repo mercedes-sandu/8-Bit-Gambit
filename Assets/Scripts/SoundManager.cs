@@ -9,7 +9,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip holdConfirmClip;
     [SerializeField] private AudioClip[] explosionSoundClips;
     [SerializeField] private AudioClip airHornClip;
-    [SerializeField] private float delayBeforeAirHorn = 0.5f;
+    [SerializeField] private float delayBeforeAirHorn = 0.2f;
 
     private AudioSource _audioSource;
     private Coroutine _currentCoroutine;
