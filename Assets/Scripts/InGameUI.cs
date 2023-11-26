@@ -37,6 +37,7 @@ public class InGameUI : MonoBehaviour
 
     private Canvas _canvas;
     private Animator _animator;
+    private Image _attackTextContainerImage;
     
     private TilemapRenderer _backgroundTilemapRenderer;
     
@@ -75,6 +76,8 @@ public class InGameUI : MonoBehaviour
         levelDrawCanvas.GetComponent<CanvasGroup>().alpha = 0;
 
         attackText.enabled = false;
+        _attackTextContainerImage = attackText.transform.parent.GetComponent<Image>();
+        _attackTextContainerImage.enabled = false;
 
         _animator = GetComponent<Animator>();
         
@@ -466,6 +469,7 @@ public class InGameUI : MonoBehaviour
     private void AttackUI(ChessPiece targetPiece, bool isPlayer)
     {
         attackText.enabled = true;
+        _attackTextContainerImage.enabled = true;
         var pieceName = FormatPieceName(targetPiece.name);
         attackText.text = $"{pieceName.ToUpper()} TO {Board.Instance.GetBoardTileName(targetPiece.transform.position)}";
         _animator.Play("InGameUIAttack");
@@ -487,6 +491,7 @@ public class InGameUI : MonoBehaviour
     public void DisableAttackText()
     {
         attackText.enabled = false;
+        _attackTextContainerImage.enabled = false;
     }
 
     /// <summary>

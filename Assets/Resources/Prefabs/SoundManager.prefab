@@ -45,12 +45,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c40b834cb6bb7545bbdb7f5c0177e16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioSource: {fileID: 1168167038965282594}
-  _selectPieceClip: {fileID: 8300000, guid: 64949f2f5f821f44bb46e80dabf43efd, type: 3}
-  _holdConfirmClip: {fileID: 8300000, guid: 0c07ac3e3c97bc248aeed637f6693d19, type: 3}
-  _explosionSoundClips:
+  selectPieceClip: {fileID: 8300000, guid: 64949f2f5f821f44bb46e80dabf43efd, type: 3}
+  holdConfirmClip: {fileID: 8300000, guid: 0c07ac3e3c97bc248aeed637f6693d19, type: 3}
+  explosionSoundClips:
   - {fileID: 8300000, guid: 8b42863716b89e34ca24f2f62f3e830f, type: 3}
-  - {fileID: 8300000, guid: dbe361ca00904ea4c9a5989ce0a4fd55, type: 3}
+  - {fileID: 8300000, guid: d030e60cdbe4a4c469eba6240780ca71, type: 3}
+  airHornClip: {fileID: 8300000, guid: 40e3c30f35023a943a7fec9232e36b62, type: 3}
+  delayBeforeAirHorn: 0.5
 --- !u!82 &1168167038965282594
 AudioSource:
   m_ObjectHideFlags: 0
