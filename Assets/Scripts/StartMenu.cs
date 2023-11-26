@@ -23,6 +23,8 @@ public class StartMenu : MonoBehaviour
     [SerializeField] private Sprite buttonHighlighted;
     [SerializeField] private Sprite buttonPressed;
 
+    [SerializeField] private bool startButtonDoesReplay = false;
+
     private Sprite[] _progressBarSprites;
     private int _numSteps;
     
@@ -175,7 +177,14 @@ public class StartMenu : MonoBehaviour
             switch (_selectedButtonIndex)
             {
                 case 0:
-                    StartButton();
+                    if (startButtonDoesReplay)
+                    {
+                        ReplayButton();
+                    }
+                    else
+                    {
+                        StartButton();
+                    }
                     break;
                 case 1:
                     QuitButton();
@@ -193,6 +202,14 @@ public class StartMenu : MonoBehaviour
     {
         // todo: load instructions scene
         SceneManager.LoadScene("TestInput");
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void ReplayButton()
+    {
+        SceneManager.LoadScene("StartMenu");
     }
 
     /// <summary>
