@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class StartMenu : MonoBehaviour
 {
@@ -12,15 +14,14 @@ public class StartMenu : MonoBehaviour
     
     // note: these are not actual buttons because the player cannot click them anyway
     // we will simulate the clicks
-    [SerializeField] private SpriteRenderer startButton;
-    [SerializeField] private SpriteRenderer quitButton;
-
+    [SerializeField] private Image startButton;
+    [SerializeField] private Image quitButton;
+    [SerializeField] private Image startButtonProgressBar;
+    [SerializeField] private Image quitButtonProgressBar;
+    
     [SerializeField] private Sprite buttonNormal;
     [SerializeField] private Sprite buttonHighlighted;
     [SerializeField] private Sprite buttonPressed;
-
-    private SpriteRenderer _startButtonProgressBar;
-    private SpriteRenderer _quitButtonProgressBar;
 
     private Sprite[] _progressBarSprites;
     private int _numSteps;
@@ -32,8 +33,8 @@ public class StartMenu : MonoBehaviour
     private Coroutine _currentCoroutine;
     private bool _coroutineStarted = false;
 
-    private List<(SpriteRenderer, SpriteRenderer)> _buttons = new();
-    private (SpriteRenderer, SpriteRenderer) _selectedButton;
+    private List<(Image, Image)> _buttons = new();
+    private (Image, Image) _selectedButton;
     private int _selectedButtonIndex;
 
     /// <summary>
@@ -41,9 +42,7 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        _startButtonProgressBar = startButton.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        _quitButtonProgressBar = quitButton.transform.GetChild(0).GetComponent<SpriteRenderer>();
-        
+        Debug.Log(startButton);
         startButton.sprite = buttonHighlighted;
         quitButton.sprite = buttonNormal;
 
@@ -51,12 +50,12 @@ public class StartMenu : MonoBehaviour
             Resources.LoadAll<Sprite>("Sprites/Menu Button Progress Bars/Menu Button Progress Bar");
         _numSteps = _progressBarSprites.Length;
         
-        _buttons = new List<(SpriteRenderer, SpriteRenderer)>()
+        _buttons = new List<(Image, Image)>()
         {
-            (startButton, _startButtonProgressBar),
-            (quitButton, _quitButtonProgressBar)
+            (startButton, startButtonProgressBar),
+            (quitButton, quitButtonProgressBar)
         };
-        _selectedButton = (startButton, _startButtonProgressBar);
+        _selectedButton = (startButton, startButtonProgressBar);
         _selectedButtonIndex = 0;
         
         _keyTapTimer = keyTapThreshold;
@@ -192,7 +191,8 @@ public class StartMenu : MonoBehaviour
     /// </summary>
     private void StartButton()
     {
-        // load the next scene... instructions scene?
+        // todo: load instructions scene
+        SceneManager.LoadScene("TestInput");
     }
 
     /// <summary>
