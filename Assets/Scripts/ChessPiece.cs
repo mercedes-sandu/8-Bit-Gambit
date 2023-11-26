@@ -99,6 +99,7 @@ public class ChessPiece : MonoBehaviour
         var progressSprites = green ? _greenProgressBarSprites : _redProgressBarSprites;
         _numSteps = progressSprites.Length;
         progressBar.enabled = true;
+        SoundManager.Instance.StartHoldAudio(timeToHold, progressSprites.Length);
         return StartCoroutine(ProgressBar(0, progressSprites));
     }
 
@@ -151,6 +152,7 @@ public class ChessPiece : MonoBehaviour
     public void StopProgressBar(Coroutine coroutine)
     {
         StopCoroutine(coroutine);
+        SoundManager.Instance.StopHoldAudio();
         progressBar.sprite = _greenProgressBarSprites[0];
         progressBar.enabled = false;
     }

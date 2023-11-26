@@ -136,7 +136,6 @@ public class Opponent : MonoBehaviour
     private void ConfirmSelectedPiece(ChessPiece selectedPiece, bool isPlayer)
     {
         if (isPlayer) return;
-        
         _selectedPiece.SetHighlight(false, true);
         _selectedPiece = selectedPiece;
         _selectedPieceIndex = _pieces.IndexOf(_selectedPiece);
@@ -149,6 +148,7 @@ public class Opponent : MonoBehaviour
         _patternOverlay = Instantiate(patternOverlayPrefab, _selectedTargetPiece.transform, false);
         _patternOverlay.transform.Rotate(new Vector3(0, 0, 180));
         var patternRenderer = _patternOverlay.GetComponent<PatternRenderer>();
+        SoundManager.Instance.StopHoldAudio();
         patternRenderer.SetControllingPiece(_selectedPiece);
         patternRenderer.DrawPattern(true);
         
@@ -176,6 +176,7 @@ public class Opponent : MonoBehaviour
             piece.CheckIfTargeted();
             piece.Explode();
         }
+        SoundManager.Instance.StopHoldAudio();
         SoundManager.Instance.PlayExplosion();
         GameEvent.ShakeCamera();
         GameEvent.CompleteTurn();

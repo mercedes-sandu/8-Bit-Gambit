@@ -147,9 +147,11 @@ public class LevelManager : MonoBehaviour
         {
             case 0 when numOpponentPieces == 0:
                 GameEvent.LevelOver(EndState.Draw);
+                MusicManager.Instance.PlayGameOverMusic();
                 return true;
             case 0:
                 GameEvent.LevelOver(EndState.PlayerLost);
+                MusicManager.Instance.PlayGameOverMusic();
                 return true;
             default:
             {

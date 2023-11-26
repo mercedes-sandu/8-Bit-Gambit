@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _audioSource: {fileID: 1168167038965282594}
   _selectPieceClip: {fileID: 8300000, guid: 64949f2f5f821f44bb46e80dabf43efd, type: 3}
+  _holdConfirmClip: {fileID: 8300000, guid: 0c07ac3e3c97bc248aeed637f6693d19, type: 3}
   _explosionSoundClips:
   - {fileID: 8300000, guid: 8b42863716b89e34ca24f2f62f3e830f, type: 3}
   - {fileID: 8300000, guid: dbe361ca00904ea4c9a5989ce0a4fd55, type: 3}

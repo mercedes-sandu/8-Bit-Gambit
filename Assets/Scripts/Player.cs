@@ -255,7 +255,7 @@ public class Player : MonoBehaviour
         _selectedTargetPiece = _targetPieces[_selectedTargetPieceIndex];
         _selectedTargetPiece.SetHighlight(true, false);
         GameEvent.PlayerTogglePiece(_selectedTargetPiece, InputState.SelectTarget);
-        
+        SoundManager.Instance.StopHoldAudio();
         // Setup the pattern
         _patternOverlay =  Instantiate(patternOverlayPrefab, _selectedTargetPiece.transform, false);
         var patternRenderer = _patternOverlay.GetComponent<PatternRenderer>();
@@ -284,6 +284,7 @@ public class Player : MonoBehaviour
             piece.CheckIfTargeted();
             piece.Explode();
         }
+        SoundManager.Instance.StopHoldAudio();
         SoundManager.Instance.PlayExplosion();
         GameEvent.ShakeCamera();
         GameEvent.CompleteTurn();
