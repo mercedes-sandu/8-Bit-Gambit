@@ -41,8 +41,10 @@ public class InGameUI : MonoBehaviour
 
     private FadingText _instructionsTextFadingText;
     private WaveText _turnTextWaveText;
+    private WaveText _pieceNameWaveText;
     private Coroutine _fadingTextCoroutine;
-    private Coroutine _waveTextCoroutine;
+    private Coroutine _turnWaveTextCoroutine;
+    private Coroutine _pieceNameWaveTextCoroutine;
     
     private TilemapRenderer _backgroundTilemapRenderer;
     
@@ -81,9 +83,12 @@ public class InGameUI : MonoBehaviour
         levelDrawCanvas.GetComponent<CanvasGroup>().alpha = 0;
         
         _instructionsTextFadingText = instructionsText.GetComponent<FadingText>();
+        _pieceNameWaveText = pieceNameText.GetComponent<WaveText>();
         _turnTextWaveText = turnText.GetComponent<WaveText>();
         
         _fadingTextCoroutine = _instructionsTextFadingText.FadeTextRoutine();
+        _pieceNameWaveTextCoroutine = _pieceNameWaveText.WaveTextCoroutine();
+        _turnWaveTextCoroutine = _turnTextWaveText.WaveTextCoroutine();
 
         attackText.enabled = false;
         _attackTextContainerImage = attackText.transform.parent.GetComponent<Image>();
@@ -518,6 +523,9 @@ public class InGameUI : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
+        _turnTextWaveText.StopWaveText(_turnWaveTextCoroutine);
+        _pieceNameWaveText.StopWaveText(_pieceNameWaveTextCoroutine);
+        
         GameEvent.OnTurnComplete -= UpdateTurnText;
         GameEvent.OnPlayerTogglePiece -= UpdateDetailsPanel;
         GameEvent.OnConfirmSelectedPiece -= UpdateInstructionsText;
