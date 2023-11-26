@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -31,6 +33,16 @@ public class LevelManager : MonoBehaviour
     {
         PlayerWon, PlayerLost, Draw
     }
+    
+    private static readonly Dictionary<string, string> _currentLevelToNextLevel = new()
+    {
+        { "Level 1", "Level 2" },
+        { "Level 2", "Level 3" },
+        { "Level 3", "Level 4" },
+        { "Level 4", "Level 5" },
+        { "Level 5", "GameOver" }
+    };
+
     
     /// <summary>
     /// Establishes the singleton and subscribes to game events.
@@ -137,17 +149,17 @@ public class LevelManager : MonoBehaviour
         switch (numPlayerPieces)
         {
             case 0 when numOpponentPieces == 0:
-                GameEvent.LevelOver(EndState.Draw);
+                GameEvent.LevelOver(EndState.Draw, _currentLevelToNextLevel[SceneManager.GetActiveScene().name]);
                 MusicManager.Instance.PlayGameOverMusic();
                 return true;
             case 0:
-                GameEvent.LevelOver(EndState.PlayerLost);
+                GameEvent.LevelOver(EndState.PlayerLost, _currentLevelToNextLevel[SceneManager.GetActiveScene().name]);
                 MusicManager.Instance.PlayGameOverMusic();
                 return true;
             default:
             {
                 if (numOpponentPieces != 0) return false;
-                GameEvent.LevelOver(EndState.PlayerWon);
+                GameEvent.LevelOver(EndState.PlayerWon, _currentLevelToNextLevel[SceneManager.GetActiveScene().name]);
                 MusicManager.Instance.PlayLevelCompleteMusic();
                 return true;
 

@@ -34,7 +34,8 @@ public class LevelOverObjectSpawner : MonoBehaviour
     /// 
     /// </summary>
     /// <param name="endState"></param>
-    private void StartSpawnObjects(LevelManager.EndState endState)
+    /// <param name="nextLevelName"></param>
+    private void StartSpawnObjects(LevelManager.EndState endState, string nextLevelName)
     {
         _endState = endState;
         Invoke(nameof(SpawnObjects), pauseBeforeSpawn);
@@ -91,7 +92,7 @@ public class LevelOverObjectSpawner : MonoBehaviour
             var pos = spawnLocation.position;
             var spawnedPiece = Instantiate(prefab, pos, Quaternion.identity);
             spawnedPiece.transform.SetParent(transform, true);
-            spawnedPiece.GetComponent<SpriteRenderer>().sortingLayerName = "UI";
+            spawnedPiece.GetComponent<SpriteRenderer>().sortingLayerName = "Above UI";
             _spawnedObjects.Add(spawnedPiece);
             Instantiate(playerDamageParticles, pos, Quaternion.identity);
         }
@@ -109,7 +110,7 @@ public class LevelOverObjectSpawner : MonoBehaviour
             var pos = spawnLocation.position;
             var spawnedPiece = Instantiate(prefab, pos, Quaternion.identity);
             spawnedPiece.transform.SetParent(transform, true);
-            spawnedPiece.GetComponent<SpriteRenderer>().sortingLayerName = "UI";
+            spawnedPiece.GetComponent<SpriteRenderer>().sortingLayerName = "Above UI";
             _spawnedObjects.Add(spawnedPiece);
             Instantiate(opponentDamageParticles, pos, Quaternion.identity);
         }
@@ -127,7 +128,7 @@ public class LevelOverObjectSpawner : MonoBehaviour
             var pos = spawnLocation.position;
             var spawnedPiece = Instantiate(prefab, pos, Quaternion.identity);
             spawnedPiece.transform.SetParent(transform, true);
-            spawnedPiece.GetComponent<SpriteRenderer>().sortingLayerName = "UI";
+            spawnedPiece.GetComponent<SpriteRenderer>().sortingLayerName = "Above UI";
             _spawnedObjects.Add(spawnedPiece);
             Instantiate(i % 2 == 0 ? playerDamageParticles : opponentDamageParticles, pos, Quaternion.identity);
         }

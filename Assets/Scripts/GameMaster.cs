@@ -9,10 +9,8 @@ public class GameMaster : MonoBehaviour
     {
         "Level 1", "Level 2", "Level 3", "Level 4", "Level 5"
     };
-
-    private const string GameEndSceneName = "GameOver";
-
-    private static int _currentLevelIndex = 0;
+    
+    private static string _levelNameToLoad = "Level 1";
     
     /// <summary>
     /// Subscribes to the OnLevelOver event and sets this object to not be destroyed on scene load.
@@ -30,22 +28,15 @@ public class GameMaster : MonoBehaviour
     /// scene. 
     /// </summary>
     /// <param name="endState">Either the player won or lost the level, or there was a draw.</param>
+    /// <param name="nextLevelName"></param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    private void LevelOver(LevelManager.EndState endState)
+    private void LevelOver(LevelManager.EndState endState, string nextLevelName)
     {
+        _levelNameToLoad = nextLevelName;
         switch (endState)
         {
             case LevelManager.EndState.PlayerWon:
-                _currentLevelIndex++;
-                if (_currentLevelIndex >= LevelSceneNames.Count)
-                {
-                    _currentLevelIndex = 0;
-                    SceneManager.LoadScene(GameEndSceneName);
-                }
-                else
-                {
-                    LevelManager.Instance.LevelWon();
-                }
+                LevelManager.Instance.LevelWon();
                 break;
             case LevelManager.EndState.PlayerLost:
                 LevelManager.Instance.LevelLost();
@@ -64,6 +55,15 @@ public class GameMaster : MonoBehaviour
     /// </summary>
     public static void LoadLevel()
     {
-        SceneManager.LoadScene(LevelSceneNames[_currentLevelIndex]);
+        Debug.Log($"loading {_levelNameToLoad}");
+        SceneManager.LoadScene(_levelNameToLoad);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void OnDestroy()
+    {
+        GameEvent.OnLevelOver -= LevelOver;
     }
 }

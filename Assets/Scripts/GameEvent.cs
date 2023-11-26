@@ -23,7 +23,7 @@
     /// <summary>
     /// Handles the event in which the level is over.
     /// </summary>
-    public delegate void LevelOverHandler(LevelManager.EndState endState);
+    public delegate void LevelOverHandler(LevelManager.EndState endState, string nextLevelName);
     
     /// <summary>
     /// Handles the event in which the player is toggling between their pieces during their turn.
@@ -96,12 +96,14 @@
     /// The event invoker for when the camera should shake.
     /// </summary>
     public static void ShakeCamera() => OnCameraShake?.Invoke();
-    
+
     /// <summary>
     /// The event invoker for when the level is over.
     /// </summary>
     /// <param name="endState">Whether the player won, lost, or there was a draw.</param>
-    public static void LevelOver(LevelManager.EndState endState) => OnLevelOver?.Invoke(endState);
+    /// <param name="nextLevelName"></param>
+    public static void LevelOver(LevelManager.EndState endState, string nextLevelName) =>
+        OnLevelOver?.Invoke(endState, nextLevelName);
 
     /// <summary>
     /// The event invoker for when the player toggles between their pieces.
