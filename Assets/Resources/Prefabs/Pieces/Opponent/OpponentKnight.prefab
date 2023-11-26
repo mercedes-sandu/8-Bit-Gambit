@@ -274,6 +274,8 @@ MonoBehaviour:
   pieceSelectHighlightSprite: {fileID: -220658505, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   pieceAttackHighlightSprite: {fileID: -1350711606, guid: a2bdf065125149f47b3d8d9e9b9c2e1b, type: 3}
   durability: 2
+  damageParticles: {fileID: 5430890188735338710, guid: 106190ae3b9d07549be6900babd5621a, type: 3}
+  deathParticles: {fileID: 5430890188735338710, guid: a4a05614b79344d45b9b9e2738b40f4d, type: 3}
   ExplosionPattern:
   - {fileID: 11400000, guid: 943823126450a91469581370955810f6, type: 2}
   - {fileID: 11400000, guid: 3f94b79ce19453b46b02cba648928303, type: 2}

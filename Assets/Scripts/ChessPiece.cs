@@ -16,6 +16,9 @@ public class ChessPiece : MonoBehaviour
     
     [SerializeField] private int durability = 1;
 
+    [SerializeField] private GameObject damageParticles;
+    [SerializeField] private GameObject deathParticles;
+
     private Sprite[] _greenProgressBarSprites;
     private Sprite[] _redProgressBarSprites;
     private SpriteRenderer _sr;
@@ -184,6 +187,7 @@ public class ChessPiece : MonoBehaviour
     private void TakeDamage()
     {
         _currentDurability--;
+        Instantiate(damageParticles, transform.position, Quaternion.identity);
         
         if (_currentDurability <= 0)
         {
@@ -196,6 +200,7 @@ public class ChessPiece : MonoBehaviour
                 Board.Instance.RemoveOpponentPiece(this);
             }
             
+            Instantiate(deathParticles, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
         
